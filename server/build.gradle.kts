@@ -1,10 +1,6 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
-
 plugins {
-    kotlin("jvm") version "1.9.22"
-    id("io.ktor.plugin") version "2.3.7"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktor.server)
 }
 
 group = "com.ezplay"
@@ -17,18 +13,30 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlin.io.path.ExperimentalPathApi"
+        )
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.3.0")
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-    testImplementation("io.ktor:ktor-server-tests-jvm")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-}
+    implementation(libs.logback)
+    implementation(libs.songMetadataReader)
+    implementation(libs.coroutines.jvm)
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.h2)
 
-tasks.create<JavaExec>("runDebug") {
-    
+    testImplementation("io.ktor:ktor-server-tests-jvm")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
