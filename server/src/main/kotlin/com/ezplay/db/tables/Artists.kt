@@ -1,11 +1,10 @@
 package com.ezplay.db.tables
 
+import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Table
 
-object Artists : Table() {
+object Artists : IntIdTable() {
 
-    val id = integer("id").autoIncrement()
-    val name = varchar("name", 128)
+    val name = varchar("artistName", 128)
 
-    override val primaryKey = PrimaryKey(id)
 }

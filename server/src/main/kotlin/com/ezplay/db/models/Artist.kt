@@ -1,3 +1,3 @@
 package com.ezplay.db.models
 
-data class Artist(val id: String, val name: String)
+data class Artist(val id: Int, val name: String)
