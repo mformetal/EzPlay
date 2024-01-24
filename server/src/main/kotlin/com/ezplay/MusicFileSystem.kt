@@ -19,6 +19,7 @@ class MusicFileSystem {
             .map { path ->
                 AudioFileIO.read(path.toFile()).tag.run {
                     SongMetadata(
+                        path = path.toString(),
                         songName = getFirst(FieldKey.TITLE),
                         artistName = getFirst(FieldKey.ARTIST),
                         albumName = getFirst(FieldKey.ALBUM)

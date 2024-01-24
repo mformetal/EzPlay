@@ -7,6 +7,7 @@ object Songs : Table() {
 
     val id = integer("id").autoIncrement()
     val name = varchar("name", 128)
+    val localPath = text("path")
 
     val albumId = reference("albumId", Albums.id)
     val artistId = reference("artistId", Artists.id)
