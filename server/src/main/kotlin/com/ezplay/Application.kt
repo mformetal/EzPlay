@@ -5,6 +5,7 @@ import com.ezplay.db.tables.Albums
 import com.ezplay.db.tables.Artists
 import com.ezplay.db.tables.Songs
 import com.ezplay.plugins.*
+import com.ezplay.templating.configureTemplating
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,7 @@ import org.jetbrains.exposed.sql.selectAll
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = {
         configureRouting()
+        configureTemplating()
         DatabaseSingleton.init()
         DatabaseSingleton.populate(this, coroutineContext)
     }).start(wait = true)

@@ -29,6 +29,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.3.0")
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-freemarker")
     implementation(libs.logback)
     implementation(libs.songMetadataReader)
     implementation(libs.coroutines.jvm)

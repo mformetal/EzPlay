@@ -10,6 +10,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.exists
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.coroutines.CoroutineContext
@@ -24,13 +27,14 @@ object DatabaseSingleton {
         database = Database.connect(jdbcURL, driverClassName)
 
         transaction(database) {
-            SchemaUtils.drop(Artists, Albums, Songs)
             SchemaUtils.create(Artists, Albums, Songs)
         }
     }
 
     fun populate(coroutineScope: CoroutineScope, coroutineContext: CoroutineContext) {
         coroutineScope.launch(coroutineContext + Dispatchers.IO) {
+            if (query { Songs.selectAll().count() } > 0) return@launch
+
             val songs = MusicFileSystem().songs()
 
             val artistIds = query {
