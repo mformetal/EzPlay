@@ -33,6 +33,7 @@ dependencies {
     implementation("io.ktor:ktor-server-freemarker")
     implementation("io.ktor:ktor-server-content-negotiation")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
+    implementation("io.ktor:ktor-server-partial-content")
     implementation(libs.kotlinx.serialization)
     implementation(libs.logback)
     implementation(libs.songMetadataReader)
@@ -41,6 +42,7 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.exposed.jdbc)
     implementation(libs.h2)
+    implementation("io.ktor:ktor-server-partial-content-jvm:2.3.7")
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")

@@ -1,30 +1,41 @@
 package com.ezplay
 
-import com.ezplay.db.tables.ArtistEntity
 import com.ezplay.db.DatabaseSingleton
 import com.ezplay.db.dto.ArtistDto
+import com.ezplay.db.tables.ArtistEntity
+import com.ezplay.db.tables.SongEntity
+import com.ezplay.db.tables.Songs
 import freemarker.cache.ClassTemplateLoader
 import freemarker.core.HTMLOutputFormat
+import io.ktor.http.ContentDisposition
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
-import io.ktor.server.engine.*
+import io.ktor.server.engine.embeddedServer
 import io.ktor.server.freemarker.FreeMarker
 import io.ktor.server.freemarker.FreeMarkerContent
-import io.ktor.server.netty.*
+import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.partialcontent.PartialContent
+import io.ktor.server.request.receiveParameters
+import io.ktor.server.response.header
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondFile
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import kotlinx.serialization.json.Json
+import org.jetbrains.exposed.sql.select
+import java.io.File
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = {
         configureContentNegotiation()
         configureRouting()
         configureTemplating()
+        configurePartialContent()
 
         DatabaseSingleton.init()
         DatabaseSingleton.populate(this, coroutineContext)
@@ -45,8 +56,28 @@ private fun Application.configureRouting() {
 
                 call.respond(library)
             }
+
+            get("play/{id}") {
+                val song = DatabaseSingleton.query {
+                    SongEntity.find {
+                        Songs.id eq call.parameters["id"]!!.toInt()
+                    }.first()
+                }
+
+                call.response.header(
+                    HttpHeaders.ContentDisposition,
+                    ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName,
+                        song.filePath.name).toString()
+                )
+
+                call.respondFile(File(song.localPath))
+            }
         }
     }
+}
+
+private fun Application.configurePartialContent() {
+    install(PartialContent)
 }
 
 private fun Application.configureTemplating() {
