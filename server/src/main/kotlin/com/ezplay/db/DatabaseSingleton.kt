@@ -10,9 +10,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.exists
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.coroutines.CoroutineContext
@@ -33,8 +30,6 @@ object DatabaseSingleton {
 
     fun populate(coroutineScope: CoroutineScope, coroutineContext: CoroutineContext) {
         coroutineScope.launch(coroutineContext + Dispatchers.IO) {
-            if (query { Songs.selectAll().count() } > 0) return@launch
-
             val songs = MusicFileSystem().songs()
 
             val artistIds = query {
@@ -48,7 +43,7 @@ object DatabaseSingleton {
             val albumIds = query {
                 Albums.batchInsert(songs.distinctBy { it.albumName }) { metadata ->
                     this[Albums.name] = metadata.albumName
-                    this[Albums.artistId] = artistIds.getValue(metadata.artistName)
+                    this[Albums.artist] = artistIds.getValue(metadata.artistName)
                 }.associate { resultRow ->
                     resultRow[Albums.name] to resultRow[Albums.id]
                 }
@@ -58,8 +53,8 @@ object DatabaseSingleton {
                 Songs.batchInsert(songs) { metadata ->
                     this[Songs.name] = metadata.songName
                     this[Songs.localPath] = metadata.path
-//                    this[Songs.artistId] = artistIds.getValue(metadata.artistName)
-                    this[Songs.albumId] = albumIds.getValue(metadata.albumName)
+                    this[Songs.artist] = artistIds.getValue(metadata.artistName)
+                    this[Songs.album] = albumIds.getValue(metadata.albumName)
                 }
             }
         }

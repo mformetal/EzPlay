@@ -16,6 +16,9 @@ h2 = { module = "com.h2database:h2", version = "2.2.220" }
 
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.6.2" }
+
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization-server = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor-server = { id = "io.ktor.plugin", version.ref = "ktor" }

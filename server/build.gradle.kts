@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization.server)
     alias(libs.plugins.ktor.server)
 }
 
@@ -30,6 +31,9 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-freemarker")
+    implementation("io.ktor:ktor-server-content-negotiation")
+    implementation("io.ktor:ktor-serialization-kotlinx-json")
+    implementation(libs.kotlinx.serialization)
     implementation(libs.logback)
     implementation(libs.songMetadataReader)
     implementation(libs.coroutines.jvm)

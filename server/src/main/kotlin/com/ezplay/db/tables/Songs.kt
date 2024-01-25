@@ -1,13 +1,24 @@
 package com.ezplay.db.tables
 
-import com.ezplay.db.tables.Artists.autoIncrement
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.Table
 
 object Songs : IntIdTable() {
 
     val name = varchar("songName", 128)
     val localPath = text("path")
 
-    val albumId = reference("albumId", Albums.id)
+    val album = reference("album", Albums)
+    val artist = reference("artist", Artists)
+}
+
+class SongEntity(id: EntityID<Int>) : IntEntity(id) {
+
+    companion object : IntEntityClass<SongEntity>(Songs)
+
+    val name by Songs.name
+    val album by AlbumEntity referencedOn Songs.album
+    val artistEntity by ArtistEntity referencedOn Songs.artist
 }
