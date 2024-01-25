@@ -8,7 +8,9 @@ import com.ezplay.db.tables.Songs
 import freemarker.cache.ClassTemplateLoader
 import freemarker.core.HTMLOutputFormat
 import io.ktor.http.ContentDisposition
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -22,10 +24,13 @@ import io.ktor.server.plugins.partialcontent.PartialContent
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondBytes
+import io.ktor.server.response.respondBytesWriter
 import io.ktor.server.response.respondFile
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import io.ktor.utils.io.jvm.javaio.copyTo
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.select
 import java.io.File
@@ -64,13 +69,11 @@ private fun Application.configureRouting() {
                     }.first()
                 }
 
-                call.response.header(
-                    HttpHeaders.ContentDisposition,
-                    ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName,
-                        song.filePath.name).toString()
-                )
+                val file = File(song.localPath)
 
-                call.respondFile(File(song.localPath))
+                call.respondBytesWriter(ContentType.Audio.Any, HttpStatusCode.OK, file.length()) {
+                    file.inputStream().buffered().copyTo(this)
+                }
             }
         }
     }
