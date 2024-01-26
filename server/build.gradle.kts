@@ -32,7 +32,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-freemarker")
     implementation("io.ktor:ktor-server-content-negotiation")
-    implementation("io.ktor:ktor-serialization-kotlinx-json")
+    implementation(libs.common.ktor.serialization.json)
     implementation("io.ktor:ktor-server-partial-content")
     implementation(libs.kotlinx.serialization)
     implementation(libs.logback)
