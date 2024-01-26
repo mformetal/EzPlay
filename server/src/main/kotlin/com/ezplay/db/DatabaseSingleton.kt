@@ -53,6 +53,7 @@ object DatabaseSingleton {
                 Songs.batchInsert(songs) { metadata ->
                     this[Songs.name] = metadata.songName
                     this[Songs.localPath] = metadata.path
+                    this[Songs.duration] = metadata.songDuration
                     this[Songs.artist] = artistIds.getValue(metadata.artistName)
                     this[Songs.album] = albumIds.getValue(metadata.albumName)
                 }

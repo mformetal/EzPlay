@@ -17,10 +17,12 @@ class MusicFileSystem {
                 path.hasSongExtension
             }
             .map { path ->
-                AudioFileIO.read(path.toFile()).tag.run {
+                val audioFile = AudioFileIO.read(path.toFile())
+                audioFile.tag.run {
                     SongMetadata(
                         path = path.toString(),
                         songName = getFirst(FieldKey.TITLE).trim(),
+                        songDuration = audioFile.audioHeader.trackLength,
                         artistName = getFirst(FieldKey.ARTIST).trim(),
                         albumName = getFirst(FieldKey.ALBUM).trim()
                     )
