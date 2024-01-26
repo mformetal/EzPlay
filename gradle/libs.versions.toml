@@ -3,6 +3,7 @@ kotlin = "1.9.22"
 ktor = "2.3.7"
 logback = "1.4.14"
 exposed = "0.41.1"
+android-plugin = "8.2.2"
 
 [libraries]
 songMetadataReader = { module = "org:jaudiotagger", version = "2.0.3" }
@@ -18,7 +19,13 @@ logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.6.2" }
 
+android-activity = { module = "androidx.activity:activity", version = "1.8.2" }
+android-activity-ktx = { module = "androidx.activity:activity-ktx", version = "1.8.2" }
+android-activity-compose = { module = "androidx.activity:activity-compose", version = "1.8.2" }
+
 [plugins]
+android-app = { id = "com.android.application", version.ref = "android-plugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization-server = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor-server = { id = "io.ktor.plugin", version.ref = "ktor" }
