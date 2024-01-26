@@ -51,7 +51,3 @@ dependencies {
 tasks.create("rerun") {
     dependsOn("clean", "run")
 }
-
-tasks.create("stage") {
-    dependsOn("installDist")
-}
