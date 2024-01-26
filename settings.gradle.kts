@@ -15,5 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-include(":android")
+include(":mobile:android")
 include(":server")
