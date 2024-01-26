@@ -14,7 +14,7 @@ kotlin {
         }
 
         configure<LibraryExtension> {
-            namespace = "metal.ezplay.viewmodel"
+            namespace = "metal.ezplay.network"
             compileSdk = libs.versions.android.compileSdk.get().toInt()
 
             sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -40,6 +40,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.dto)
+
             implementation(libs.common.ktor.core)
             implementation(libs.common.ktor.content.negotiation)
             implementation(libs.common.ktor.serialization)

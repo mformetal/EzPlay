@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.lib)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 kotlin {
@@ -19,14 +19,13 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.dto)
+            implementation(projects.mobile.common.network)
             implementation(projects.mobile.common.viewmodel)
+
             implementation(libs.common.ktor.core)
             implementation(libs.common.ktor.content.negotiation)
-            implementation(libs.common.ktor.serialization.json)
-        }
-
-        androidMain.dependencies {
-            implementation(libs.android.viewmodel)
+            implementation(libs.common.ktor.serialization)
         }
     }
 }

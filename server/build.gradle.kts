@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.kotlin.serialization.server)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktor.server)
 }
 
@@ -32,7 +32,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-freemarker")
     implementation("io.ktor:ktor-server-content-negotiation")
-    implementation(libs.common.ktor.serialization.json)
+    implementation(libs.common.ktor.serialization)
     implementation("io.ktor:ktor-server-partial-content")
     implementation(libs.kotlinx.serialization)
     implementation(libs.logback)
@@ -43,6 +43,8 @@ dependencies {
     implementation(libs.exposed.jdbc)
     implementation(libs.h2)
     implementation("io.ktor:ktor-server-partial-content-jvm:2.3.7")
+
+    implementation(projects.dto)
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")

@@ -3,6 +3,7 @@ import com.android.build.gradle.LibraryExtension
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.multiplatform")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 kotlin {
@@ -14,7 +15,7 @@ kotlin {
         }
 
         configure<LibraryExtension> {
-            namespace = "metal.ezplay.viewmodel"
+            namespace = "metal.ezplay.dto"
             compileSdk = libs.versions.android.compileSdk.get().toInt()
 
             sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -32,6 +33,7 @@ kotlin {
         }
     }
 
+    jvm()
 
     compilerOptions {
         // Common compiler options applied to all Kotlin source sets

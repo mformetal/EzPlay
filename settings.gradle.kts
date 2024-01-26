@@ -15,8 +15,10 @@ dependencyResolutionManagement {
     }
 }
 
+include(":dto")
 include(":mobile:android")
-include(":mobile:common:library")
+include(":mobile:features:library")
+include(":mobile:common:network")
 include(":mobile:common:viewmodel")
 include(":server")
 

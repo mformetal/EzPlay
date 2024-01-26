@@ -1,6 +1,6 @@
 package com.ezplay.db.tables
 
-import com.ezplay.db.tables.ArtistEntity.Companion.referrersOn
+import metal.ezplay.dto.AlbumDto
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -20,4 +20,11 @@ class AlbumEntity(id: EntityID<Int>) : IntEntity(id) {
     val name by Albums.name
     val artistEntity by ArtistEntity referencedOn Albums.artist
     val songs by SongEntity referrersOn Songs.album
+
+    fun toDto() =
+        AlbumDto(
+            id = id.value,
+            name = name,
+            songs = songs.map(SongEntity::toDto)
+        )
 }

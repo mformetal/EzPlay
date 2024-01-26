@@ -1,6 +1,7 @@
 plugins {
-    alias(libs.plugins.android.app)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -35,4 +36,13 @@ dependencies {
     implementation(libs.android.activity)
     implementation(libs.android.activity.ktx)
     implementation(libs.android.activity.compose)
+    implementation(libs.android.ktor.cio)
+    implementation(libs.android.ktor.contentnegotiation)
+    implementation(libs.android.ktor.okhttp)
+    implementation(libs.common.ktor.serialization)
+
+    implementation(projects.dto)
+    implementation(projects.mobile.common.network)
+    implementation(projects.mobile.common.viewmodel)
+    implementation(projects.mobile.features.library)
 }

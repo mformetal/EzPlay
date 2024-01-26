@@ -3,12 +3,13 @@ package metal.ezplay.viewmodel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 
-expect open class ViewModel(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
+open class ViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
 
-    val dispatcher: CoroutineDispatcher
+    protected val viewModelScope: CoroutineScope = CoroutineScope(dispatcher)
 
-    val viewModelScope: CoroutineScope
-
-    open fun onCleared()
+    public open fun onCleared() {
+        viewModelScope.cancel()
+    }
 }

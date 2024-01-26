@@ -1,7 +1,6 @@
 package com.ezplay
 
 import com.ezplay.db.DatabaseSingleton
-import com.ezplay.db.dto.ArtistDto
 import com.ezplay.db.tables.ArtistEntity
 import com.ezplay.db.tables.SongEntity
 import com.ezplay.db.tables.Songs
@@ -32,6 +31,7 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.utils.io.jvm.javaio.copyTo
 import kotlinx.serialization.json.Json
+import metal.ezplay.dto.ArtistDto
 import org.jetbrains.exposed.sql.select
 import java.io.File
 
@@ -56,7 +56,7 @@ private fun Application.configureRouting() {
         route("library") {
             get {
                 val library = DatabaseSingleton.query {
-                    ArtistEntity.all().map(ArtistDto::fromEntity)
+                    ArtistEntity.all().map(ArtistEntity::toDto)
                 }
 
                 call.respond(library)
