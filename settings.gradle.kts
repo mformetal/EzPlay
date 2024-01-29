@@ -15,6 +15,8 @@ dependencyResolutionManagement {
     }
 }
 
+includeBuild("build-logic")
+
 include(":dto")
 include(":mobile:android:app")
 include(":mobile:android:xml-resources")
