@@ -53,7 +53,7 @@ kotlin {
 }
 
 android {
-    namespace = "metal.ezplay.library"
+    namespace = "metal.ezplay.nowplaying"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")

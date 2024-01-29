@@ -40,12 +40,20 @@ android {
     }
 }
 
+repositories {
+    gradlePluginPortal()
+    google()
+    mavenCentral()
+}
+
 dependencies {
     implementation(libs.android.activity)
     implementation(libs.android.activity.ktx)
     implementation(libs.android.activity.compose)
     implementation(libs.android.compose.activity)
     implementation(libs.android.compose.material3)
+    implementation(libs.android.compose.material)
+    implementation(libs.android.compose.navigation)
     implementation(libs.android.compose.runtime)
     implementation(libs.android.activity.compose)
     implementation(libs.android.activity.compose)
@@ -58,8 +66,8 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
 
+    implementation(projects.mobile.android.xmlResources)
     implementation(projects.dto)
     implementation(projects.mobile.common.network)
-    implementation(projects.mobile.common.viewmodel)
     implementation(projects.mobile.features.library)
 }

@@ -1,14 +1,13 @@
 package metal.ezplay.library
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import metal.ezplay.network.EzPlayApi
-import metal.ezplay.viewmodel.ViewModel
 
 class LibraryViewModel(private val api: EzPlayApi) : ViewModel() {
 

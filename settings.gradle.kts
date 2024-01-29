@@ -16,10 +16,11 @@ dependencyResolutionManagement {
 }
 
 include(":dto")
-include(":mobile:android")
+include(":mobile:android:app")
+include(":mobile:android:xml-resources")
 include(":mobile:features:library")
+include(":mobile:features:nowplaying")
 include(":mobile:common:network")
-include(":mobile:common:viewmodel")
 include(":server")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
