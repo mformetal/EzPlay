@@ -21,5 +21,10 @@ gradlePlugin {
             id = "kmp-library"
             implementationClass = "plugins.KmpLibraryPlugin"
         }
+
+        register("AndroidLibraryPlugin") {
+            id = "android-library"
+            implementationClass = "plugins.AndroidLibraryPlugin"
+        }
     }
 }
