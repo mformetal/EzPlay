@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.android.ktor.cio)
     implementation(libs.android.ktor.contentnegotiation)
     implementation(libs.android.ktor.okhttp)
+    implementation(libs.android.mediaplayer)
+
     implementation(libs.common.ktor.serialization)
 
     implementation(libs.koin)
