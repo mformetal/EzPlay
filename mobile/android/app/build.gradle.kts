@@ -70,4 +70,5 @@ dependencies {
     implementation(projects.dto)
     implementation(projects.mobile.common.network)
     implementation(projects.mobile.features.library)
+    implementation(projects.mobile.features.nowplaying)
 }

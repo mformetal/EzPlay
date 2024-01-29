@@ -34,6 +34,7 @@ kotlin {
             implementation(libs.koin.android.compose)
 
             implementation(projects.dto)
+            implementation(projects.mobile.features.nowplaying)
         }
     }
 }

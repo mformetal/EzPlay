@@ -23,7 +23,7 @@ gradlePlugin {
         }
 
         register("AndroidLibraryPlugin") {
-            id = "android-library"
+            id = "android-lib"
             implementationClass = "plugins.AndroidLibraryPlugin"
         }
     }
