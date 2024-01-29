@@ -38,6 +38,7 @@ android-ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kt
 android-ktor-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 android-ktor-contentnegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 android-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version = "2.7.0" }
+android-mediaplayer = { module = "androidx.media3:media3-exoplayer", version = "1.2.1" }
 
 # DEPENDENCY INJECTION
 koin = { module = "io.insert-koin:koin-core", version.ref = "koin" }
