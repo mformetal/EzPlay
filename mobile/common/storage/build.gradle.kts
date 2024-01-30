@@ -36,11 +36,10 @@ kotlin {
             implementation(libs.koin.android.compose)
 
             implementation(projects.dto)
-            implementation(projects.mobile.common.storage)
         }
     }
 }
 
 android {
-    namespace = "metal.ezplay.nowplaying"
+    namespace = "metal.ezplay.storage"
 }

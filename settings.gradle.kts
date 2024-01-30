@@ -23,6 +23,7 @@ include(":mobile:android:xml-resources")
 include(":mobile:features:library")
 include(":mobile:features:nowplaying")
 include(":mobile:common:network")
+include(":mobile:common:storage")
 include(":server")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

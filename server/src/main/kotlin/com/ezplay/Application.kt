@@ -70,10 +70,17 @@ private fun Application.configureRouting() {
                 }
 
                 val file = File(song.localPath)
-
-                call.respondBytesWriter(ContentType.Audio.Any, HttpStatusCode.OK, file.length()) {
-                    file.inputStream().buffered().copyTo(this)
-                }
+                call.response.header(
+                    HttpHeaders.ContentDisposition,
+                    ContentDisposition.File.withParameter(ContentDisposition.Parameters.FileName, file.name)
+                        .toString()
+                )
+                call.response.header(
+                    HttpHeaders.ContentLength,
+                    file.length()
+                )
+                call.response.status(HttpStatusCode.OK)
+                call.respondFile(file)
             }
         }
     }

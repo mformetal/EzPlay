@@ -71,6 +71,7 @@ dependencies {
     implementation(projects.mobile.android.xmlResources)
     implementation(projects.dto)
     implementation(projects.mobile.common.network)
+    implementation(projects.mobile.common.storage)
     implementation(projects.mobile.features.library)
     implementation(projects.mobile.features.nowplaying)
 }
