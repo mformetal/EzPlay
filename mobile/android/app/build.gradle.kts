@@ -38,6 +38,11 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    lint {
+        disable.add("UnsafeOptInUsageError")
+        baseline = file("lint-baseline.xml")
+    }
 }
 
 repositories {

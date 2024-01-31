@@ -4,6 +4,7 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import extensions.catalog
 import extensions.intVersion
+import extensions.library
 import extensions.stringVersion
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -12,12 +13,17 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 
 class KmpLibraryPlugin : Plugin<Project> {
     override fun apply(target: Project) = with (target) {
         apply<KotlinMultiplatformPluginWrapper>()
         apply<LibraryPlugin>()
+
+        kotlinExtension.sourceSets.maybeCreate("androidMain").dependencies {
+            implementation(catalog().library("android.compose.runtime"))
+        }
 
         pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
             configure<KotlinMultiplatformExtension> {
@@ -58,6 +64,11 @@ class KmpLibraryPlugin : Plugin<Project> {
 
                 buildFeatures {
                     compose = true
+                }
+
+                lint {
+                    disable.add("UnsafeOptInUsageError")
+                    baseline = file("lint-baseline.xml")
                 }
             }
         }

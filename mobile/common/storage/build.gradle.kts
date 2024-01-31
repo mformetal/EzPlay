@@ -1,13 +1,25 @@
 plugins {
     id("kmp-library")
+    alias(libs.plugins.sqldelight)
+}
+
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("metal.ezplay.storage")
+        }
+    }
 }
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.dto)
+            implementation(projects.mobile.common.entities)
             implementation(projects.mobile.common.network)
 
+            implementation(libs.common.coroutines)
+            implementation(libs.common.datetime)
             implementation(libs.common.ktor.core)
             implementation(libs.common.ktor.content.negotiation)
             implementation(libs.common.ktor.serialization)
@@ -28,6 +40,7 @@ kotlin {
             implementation(libs.android.ktor.contentnegotiation)
             implementation(libs.android.ktor.okhttp)
             implementation(libs.android.mediaplayer)
+            implementation(libs.android.sqldelight)
 
             implementation(libs.common.ktor.serialization)
 

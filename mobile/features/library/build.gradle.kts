@@ -7,6 +7,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.dto)
             implementation(projects.mobile.common.network)
+            implementation(projects.mobile.common.storage)
 
             implementation(libs.common.ktor.core)
             implementation(libs.common.ktor.content.negotiation)

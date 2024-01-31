@@ -1,0 +1,7 @@
+selectAll:
+SELECT *
+FROM song;
+
+insert:
+INSERT OR IGNORE INTO song (id, name)
+VALUES (?, ?);

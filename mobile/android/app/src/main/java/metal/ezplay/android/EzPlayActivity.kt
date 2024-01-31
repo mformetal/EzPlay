@@ -17,7 +17,9 @@ import metal.ezplay.library.LibraryScreen
 import metal.ezplay.library.LibraryViewModel
 import metal.ezplay.network.EzPlayApi
 import metal.ezplay.nowplaying.NowPlayingViewModel
+import metal.ezplay.storage.AndroidDriverFactory
 import metal.ezplay.storage.AndroidMusicFileStorage
+import metal.ezplay.storage.createDatabase
 
 class EzPlayActivity : ComponentActivity() {
 
@@ -27,11 +29,13 @@ class EzPlayActivity : ComponentActivity() {
         }
     }
     private val api = EzPlayApi(client)
-    private val libraryViewModel = LibraryViewModel(api)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val driverFactory = AndroidDriverFactory(this)
+        val database = createDatabase(driverFactory)
+        val libraryViewModel = LibraryViewModel(api, database)
         val extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
 
         val renderersFactory = DefaultRenderersFactory(applicationContext)
