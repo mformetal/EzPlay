@@ -1,7 +1,7 @@
 package metal.ezplay.library
 
-import metal.ezplay.dto.ArtistDto
+import metal.ezplay.dto.SongDto
 
 data class LibraryState(
-    val artists: List<ArtistDto> = emptyList()
+    val songs: List<SongDto> = emptyList()
 )

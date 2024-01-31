@@ -5,6 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AlbumDto(
     val id: Int,
-    val name: String,
-    val songs: List<SongDto>
+    val name: String
 )

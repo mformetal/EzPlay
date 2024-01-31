@@ -1,14 +1,21 @@
 package metal.ezplay.library
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import metal.ezplay.nowplaying.NowPlayingViewModel
 
 @Composable
@@ -18,17 +25,13 @@ fun LibraryScreen(viewModel: LibraryViewModel, nowPlayingViewModel: NowPlayingVi
     }
 
     val library by viewModel.uiState.collectAsState()
-    val songs = library.artists
-        .flatMap { artist ->
-            artist.albums
-        }.flatMap { album ->
-            album.songs
-        }.sortedBy { it.name }
-    LazyColumn {
-        items(songs) { song ->
-            ClickableText(text = AnnotatedString(song.name), onClick = {
-                nowPlayingViewModel.play(song)
-            })
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        items(library.songs) { song ->
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(text = song.name, style = MaterialTheme.typography.bodyLarge)
+                Text(text = song.artist.name, style = MaterialTheme.typography.bodySmall)
+            }
+            Divider()
         }
     }
 }

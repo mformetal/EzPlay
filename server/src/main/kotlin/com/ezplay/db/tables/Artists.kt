@@ -17,11 +17,4 @@ class ArtistEntity(id: EntityID<Int>) : IntEntity(id) {
 
     val name by Artists.name
     val albums by AlbumEntity referrersOn Albums.artist
-
-    fun toDto() =
-        ArtistDto(
-            id = id.value,
-            name = name,
-            albums = albums.map(AlbumEntity::toDto)
-        )
 }

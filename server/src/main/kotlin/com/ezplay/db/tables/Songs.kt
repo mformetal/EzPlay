@@ -25,14 +25,8 @@ class SongEntity(id: EntityID<Int>) : IntEntity(id) {
     val localPath by Songs.localPath
     val duration by Songs.duration
     val album by AlbumEntity referencedOn Songs.album
-    val artistEntity by ArtistEntity referencedOn Songs.artist
+    val artist by ArtistEntity referencedOn Songs.artist
 
     val filePath: Path
         get() = Path(localPath)
-
-    fun toDto() =
-        SongDto(
-            id = id.value,
-            name = name
-        )
 }

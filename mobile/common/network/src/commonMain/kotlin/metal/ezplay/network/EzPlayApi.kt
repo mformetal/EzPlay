@@ -21,8 +21,8 @@ class EzPlayApi(private val client: HttpClient) {
             header("Range", "bytes=${start}-${end}")
         }
 
-    suspend fun library(): List<ArtistDto> =
-        client.get(Routes.LIBRARY).body<List<ArtistDto>>()
+    suspend fun library(): List<SongDto> =
+        client.get(Routes.LIBRARY).body<List<SongDto>>()
 
     suspend fun play(songDto: SongDto): HttpResponse =
         client.get(Routes.play(songDto.id))

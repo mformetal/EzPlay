@@ -36,8 +36,10 @@ import io.ktor.server.routing.routing
 import io.ktor.util.chomp
 import io.ktor.utils.io.jvm.javaio.copyTo
 import kotlinx.serialization.json.Json
+import metal.ezplay.dto.AlbumDto
 import metal.ezplay.dto.ArtistDto
 import metal.ezplay.dto.PreviewDto
+import metal.ezplay.dto.SongDto
 import org.jetbrains.exposed.sql.select
 import java.io.File
 
@@ -61,11 +63,23 @@ private fun Application.configureRouting() {
 
         route("library") {
             get {
-                val library = DatabaseSingleton.query {
-                    ArtistEntity.all().map(ArtistEntity::toDto)
+                val songs = DatabaseSingleton.query {
+                    SongEntity.all()
+                        .map {
+                            SongDto(
+                                id = it.id.value,
+                                name = it.name,
+                                album = AlbumDto(id = it.album.id.value,
+                                    name = it.album.name),
+                                artist = ArtistDto(
+                                    id = it.artist.id.value,
+                                    name = it.artist.name
+                                )
+                            )
+                        }
                 }
 
-                call.respond(library)
+                call.respond(songs)
             }
 
             get("preview/{id}") {

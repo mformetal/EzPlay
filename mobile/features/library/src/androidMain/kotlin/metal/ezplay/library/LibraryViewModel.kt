@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import metal.ezplay.dto.ArtistDto
+import metal.ezplay.dto.SongDto
 import metal.ezplay.network.EzPlayApi
 import metal.ezplay.storage.AppDatabase
 
@@ -25,50 +25,40 @@ class LibraryViewModel(private val api: EzPlayApi,
             updateDatabase(library)
 
             _uiState.update { state ->
-                state.copy(artists = library)
+                state.copy(songs = library)
             }
         }
     }
 
-    private suspend fun updateDatabase(library: List<ArtistDto>) {
+    private suspend fun updateDatabase(library: List<SongDto>) {
         withContext(Dispatchers.IO) {
             appDatabase.artistQueries.transaction {
-                library.forEach { artistDto ->
+                library.forEach { song ->
                     appDatabase.artistQueries.insert(
-                        artistDto.id.toLong(),
-                        artistDto.name
+                        song.id.toLong(),
+                        song.name
                     )
                 }
             }
 
             appDatabase.albumQueries.transaction {
-                library.associateBy { artistDto ->
-                    artistDto.albums
-                }.forEach { (albums, artist) ->
-                    albums.forEach { album ->
-                        appDatabase.albumQueries
-                            .insert(
-                                album.id.toLong(),
-                                artist.id.toLong(),
-                                album.name
-                            )
-                    }
+                library.forEach { song ->
+                    appDatabase.albumQueries.insert(
+                        song.album.id.toLong(),
+                        song.artist.id.toLong(),
+                        song.album.name
+                    )
                 }
             }
 
             appDatabase.songQueries.transaction {
-                library.forEach { artist ->
-                    artist.albums.forEach { album ->
-                        album.songs.forEach { song ->
-                            appDatabase.songQueries
-                                .insert(
-                                    song.id.toLong(),
-                                    album.id.toLong(),
-                                    artist.id.toLong(),
-                                    song.name
-                                )
-                        }
-                    }
+                library.forEach { song ->
+                    appDatabase.songQueries.insert(
+                        song.id.toLong(),
+                        song.album.id.toLong(),
+                        song.artist.id.toLong(),
+                        song.name
+                    )
                 }
             }
         }
