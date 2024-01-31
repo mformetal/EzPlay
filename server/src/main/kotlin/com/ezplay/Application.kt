@@ -9,11 +9,16 @@ import io.ktor.http.ContentDisposition
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.network.tls.certificates.buildKeyStore
+import io.ktor.network.tls.certificates.saveToFile
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
+import io.ktor.server.engine.applicationEngineEnvironment
+import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
+import io.ktor.server.engine.sslConnector
 import io.ktor.server.freemarker.FreeMarker
 import io.ktor.server.freemarker.FreeMarkerContent
 import io.ktor.server.netty.Netty
@@ -34,20 +39,47 @@ import metal.ezplay.dto.ArtistDto
 import metal.ezplay.dto.PreviewDto
 import metal.ezplay.dto.SongDto
 import org.jaudiotagger.audio.AudioFileIO
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.writeBytes
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = {
-        configureContentNegotiation()
-        configureRouting()
-        configureTemplating()
-        configurePartialContent()
+    val keyStoreFile = File("server_keystore.jks")
+    val keyStore = buildKeyStore {
+        certificate("sampleAlias") {
+            password = "foobar"
+            domains = listOf("127.0.0.1", "0.0.0.0", "localhost")
+        }
+    }
+    keyStore.saveToFile(keyStoreFile, "123456")
 
-        DatabaseSingleton.init()
-        DatabaseSingleton.populate(this, coroutineContext)
-    }).start(wait = true)
+    val environment = applicationEngineEnvironment {
+        log = LoggerFactory.getLogger("ktor.application")
+        connector {
+            port = 8080
+        }
+        sslConnector(
+            keyStore = keyStore,
+            keyAlias = "sampleAlias",
+            keyStorePassword = { "123456".toCharArray() },
+            privateKeyPassword = { "foobar".toCharArray() }) {
+            port = 8443
+            keyStorePath = keyStoreFile
+        }
+
+        module {
+            configureContentNegotiation()
+            configureRouting()
+            configureTemplating()
+            configurePartialContent()
+
+            DatabaseSingleton.init()
+            DatabaseSingleton.populate(this, coroutineContext)
+        }
+    }
+
+    embeddedServer(Netty, environment).start(wait = true)
 }
 
 private fun Application.configureRouting() {
