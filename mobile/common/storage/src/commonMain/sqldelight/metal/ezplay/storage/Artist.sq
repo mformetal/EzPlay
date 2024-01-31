@@ -1,0 +1,3 @@
+insert:
+INSERT OR IGNORE INTO artist (id, name)
+VALUES (?, ?);

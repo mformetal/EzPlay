@@ -32,15 +32,44 @@ class LibraryViewModel(private val api: EzPlayApi,
 
     private suspend fun updateDatabase(library: List<ArtistDto>) {
         withContext(Dispatchers.IO) {
-            appDatabase.songQueries.transaction {
-                library.flatMap { it.albums }
-                    .flatMap { it.songs }
-                    .forEach {
-                        appDatabase.songQueries.insert(
-                            it.id.toLong(),
-                            it.name
-                        )
+            appDatabase.artistQueries.transaction {
+                library.forEach { artistDto ->
+                    appDatabase.artistQueries.insert(
+                        artistDto.id.toLong(),
+                        artistDto.name
+                    )
+                }
+            }
+
+            appDatabase.albumQueries.transaction {
+                library.associateBy { artistDto ->
+                    artistDto.albums
+                }.forEach { (albums, artist) ->
+                    albums.forEach { album ->
+                        appDatabase.albumQueries
+                            .insert(
+                                album.id.toLong(),
+                                artist.id.toLong(),
+                                album.name
+                            )
                     }
+                }
+            }
+
+            appDatabase.songQueries.transaction {
+                library.forEach { artist ->
+                    artist.albums.forEach { album ->
+                        album.songs.forEach { song ->
+                            appDatabase.songQueries
+                                .insert(
+                                    song.id.toLong(),
+                                    album.id.toLong(),
+                                    artist.id.toLong(),
+                                    song.name
+                                )
+                        }
+                    }
+                }
             }
         }
     }

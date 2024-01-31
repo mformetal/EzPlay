@@ -23,7 +23,7 @@ fun LibraryScreen(viewModel: LibraryViewModel, nowPlayingViewModel: NowPlayingVi
             artist.albums
         }.flatMap { album ->
             album.songs
-        }
+        }.sortedBy { it.name }
     LazyColumn {
         items(songs) { song ->
             ClickableText(text = AnnotatedString(song.name), onClick = {
