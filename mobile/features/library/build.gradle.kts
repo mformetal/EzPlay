@@ -27,7 +27,6 @@ kotlin {
             implementation(libs.android.compose.runtime)
             implementation(libs.android.activity.compose)
             implementation(libs.android.activity.compose)
-            implementation(libs.android.ktor.cio)
             implementation(libs.android.ktor.contentnegotiation)
             implementation(libs.android.ktor.okhttp)
             implementation(libs.common.ktor.serialization)

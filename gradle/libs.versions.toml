@@ -40,7 +40,6 @@ android-compose-material3 = { module = "androidx.compose.material3:material3", v
 android-compose-material = { module = "androidx.compose.material:material", version = "1.6.0" }
 android-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.7.6" }
 android-ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
-android-ktor-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 android-ktor-contentnegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 android-mediaplayer = { module = "androidx.media3:media3-exoplayer", version = "1.2.1" }
 android-sqldelight = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
