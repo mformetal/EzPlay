@@ -33,7 +33,6 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation")
     implementation(libs.common.ktor.serialization)
     implementation("io.ktor:ktor-server-partial-content")
-    implementation("io.ktor:ktor-network-tls-certificates")
     implementation(libs.kotlinx.serialization)
     implementation(libs.logback)
     implementation(libs.songMetadataReader)
