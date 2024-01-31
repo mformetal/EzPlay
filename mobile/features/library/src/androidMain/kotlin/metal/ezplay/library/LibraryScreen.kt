@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import metal.ezplay.nowplaying.NowPlayingViewModel
 
 @Composable
@@ -27,6 +28,14 @@ fun LibraryScreen(viewModel: LibraryViewModel, nowPlayingViewModel: NowPlayingVi
     val library by viewModel.uiState.collectAsState()
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(library.songs) { song ->
+            AsyncImage(
+                model = song.imageUrl,
+                contentDescription = null,
+                onError = {
+                    val result = it.result
+                }
+            )
+
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(text = song.name, style = MaterialTheme.typography.bodyLarge)
                 Text(text = song.artist.name, style = MaterialTheme.typography.bodySmall)

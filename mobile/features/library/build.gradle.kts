@@ -18,6 +18,8 @@ kotlin {
             implementation(libs.android.activity)
             implementation(libs.android.activity.ktx)
             implementation(libs.android.activity.compose)
+            implementation(libs.android.coil)
+            implementation(libs.android.coil.compose)
             implementation(libs.android.compose.activity)
             implementation(libs.android.compose.material3)
             implementation(libs.android.compose.material)

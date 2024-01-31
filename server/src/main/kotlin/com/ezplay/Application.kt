@@ -1,17 +1,14 @@
 package com.ezplay
 
 import com.ezplay.db.DatabaseSingleton
-import com.ezplay.db.tables.ArtistEntity
 import com.ezplay.db.tables.SongEntity
 import com.ezplay.db.tables.Songs
 import freemarker.cache.ClassTemplateLoader
 import freemarker.core.HTMLOutputFormat
 import io.ktor.http.ContentDisposition
-import io.ktor.http.ContentRange
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.parseRangesSpecifier
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -22,9 +19,6 @@ import io.ktor.server.freemarker.FreeMarkerContent
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.partialcontent.PartialContent
-import io.ktor.server.request.header
-import io.ktor.server.request.ranges
-import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
@@ -33,15 +27,16 @@ import io.ktor.server.response.respondFile
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import io.ktor.util.chomp
 import io.ktor.utils.io.jvm.javaio.copyTo
 import kotlinx.serialization.json.Json
 import metal.ezplay.dto.AlbumDto
 import metal.ezplay.dto.ArtistDto
 import metal.ezplay.dto.PreviewDto
 import metal.ezplay.dto.SongDto
-import org.jetbrains.exposed.sql.select
+import org.jaudiotagger.audio.AudioFileIO
 import java.io.File
+import java.nio.file.Files
+import kotlin.io.path.writeBytes
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = {
@@ -71,6 +66,7 @@ private fun Application.configureRouting() {
                                 name = it.name,
                                 album = AlbumDto(id = it.album.id.value,
                                     name = it.album.name),
+                                imageUrl = "http://10.0.0.2:8080/library/artwork/${it.id.value}",
                                 artist = ArtistDto(
                                     id = it.artist.id.value,
                                     name = it.artist.name
@@ -78,6 +74,11 @@ private fun Application.configureRouting() {
                             )
                         }
                 }
+
+                val file = File(DatabaseSingleton.query {
+                    SongEntity.all().first()
+                }.localPath)
+                val audioTag = AudioFileIO.read(file)
 
                 call.respond(songs)
             }
@@ -94,6 +95,24 @@ private fun Application.configureRouting() {
                     fileSize = file.length(),
                     fileName = file.name
                 ))
+            }
+
+            get("artwork/{id}") {
+                val song = DatabaseSingleton.query {
+                    SongEntity.find {
+                        Songs.id eq call.parameters["id"]!!.toInt()
+                    }.first()
+                }
+
+                val file = File(song.localPath)
+                val audioFile = AudioFileIO.read(file)
+                val artwork = audioFile.tag.firstArtwork
+                val imageData = artwork?.binaryData
+                if (imageData == null) {
+                    call.respond(HttpStatusCode.NotFound)
+                } else {
+                   call.respondBytes(imageData, ContentType.Image.JPEG, HttpStatusCode.OK)
+                }
             }
 
             get("download/{id}") {

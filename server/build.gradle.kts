@@ -10,8 +10,7 @@ version = "0.0.1"
 application {
     mainClass.set("com.ezplay.ApplicationKt")
 
-    val isDevelopment: Boolean = !project.ext.has("release")
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
 }
 
 kotlin {
