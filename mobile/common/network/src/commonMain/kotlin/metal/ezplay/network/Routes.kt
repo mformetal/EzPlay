@@ -6,5 +6,9 @@ object Routes {
 
     val LIBRARY = BASE_URL.plus("library")
 
+    fun preview(songId: Int) = LIBRARY.plus("/preview/$songId")
+
+    fun download(songId: Int) = LIBRARY.plus("/download/$songId")
+
     fun play(songId: Int) = LIBRARY.plus("/play/$songId")
 }

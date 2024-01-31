@@ -7,9 +7,11 @@ import com.ezplay.db.tables.Songs
 import freemarker.cache.ClassTemplateLoader
 import freemarker.core.HTMLOutputFormat
 import io.ktor.http.ContentDisposition
+import io.ktor.http.ContentRange
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.parseRangesSpecifier
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -20,6 +22,8 @@ import io.ktor.server.freemarker.FreeMarkerContent
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.partialcontent.PartialContent
+import io.ktor.server.request.header
+import io.ktor.server.request.ranges
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
@@ -29,9 +33,11 @@ import io.ktor.server.response.respondFile
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import io.ktor.util.chomp
 import io.ktor.utils.io.jvm.javaio.copyTo
 import kotlinx.serialization.json.Json
 import metal.ezplay.dto.ArtistDto
+import metal.ezplay.dto.PreviewDto
 import org.jetbrains.exposed.sql.select
 import java.io.File
 
@@ -60,6 +66,37 @@ private fun Application.configureRouting() {
                 }
 
                 call.respond(library)
+            }
+
+            get("preview/{id}") {
+                val song = DatabaseSingleton.query {
+                    SongEntity.find {
+                        Songs.id eq call.parameters["id"]!!.toInt()
+                    }.first()
+                }
+
+                val file = File(song.localPath)
+                call.respond(PreviewDto(
+                    fileSize = file.length(),
+                    fileName = file.name
+                ))
+            }
+
+            get("download/{id}") {
+                val song = DatabaseSingleton.query {
+                    SongEntity.find {
+                        Songs.id eq call.parameters["id"]!!.toInt()
+                    }.first()
+                }
+
+                val file = File(song.localPath)
+                call.response.status(HttpStatusCode.OK)
+                call.response.header(
+                    HttpHeaders.ContentDisposition,
+                    ContentDisposition.File.withParameter(ContentDisposition.Parameters.FileName, file.name)
+                        .toString()
+                )
+                call.respondFile(file)
             }
 
             get("play/{id}") {

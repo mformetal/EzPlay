@@ -17,6 +17,7 @@ import metal.ezplay.library.LibraryScreen
 import metal.ezplay.library.LibraryViewModel
 import metal.ezplay.network.EzPlayApi
 import metal.ezplay.nowplaying.NowPlayingViewModel
+import metal.ezplay.nowplaying.SongDownloader
 import metal.ezplay.storage.AndroidDriverFactory
 import metal.ezplay.storage.AndroidMusicFileStorage
 import metal.ezplay.storage.createDatabase
@@ -49,7 +50,9 @@ class EzPlayActivity : ComponentActivity() {
                 playWhenReady = false
             }
 
-        val nowPlayingViewModel = NowPlayingViewModel(api, exoPlayer, AndroidMusicFileStorage(filesDir))
+        val nowPlayingViewModel = NowPlayingViewModel(api, exoPlayer,
+            SongDownloader(api),
+            AndroidMusicFileStorage(filesDir))
 
         setContent {
             val navController = rememberNavController()

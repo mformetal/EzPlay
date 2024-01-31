@@ -5,5 +5,7 @@ import java.io.File
 
 interface MusicFileStorage {
 
-    suspend fun download(channel: ByteReadChannel, fileName: String): File
+    suspend fun createFile(fileName: String): File
+
+    suspend fun downloadInto(channel: ByteReadChannel, file: File)
 }
