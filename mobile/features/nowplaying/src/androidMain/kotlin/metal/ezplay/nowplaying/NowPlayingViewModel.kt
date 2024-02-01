@@ -42,12 +42,6 @@ class NowPlayingViewModel(private val api: EzPlayApi,
     }
 
     fun play(song: SongDto) {
-        val currentState = _uiState.value
-        if (currentState.song == song) return
-
-        _uiState.update {
-            it.copy(song = null, isPlaying = false)
-        }
         exoPlayer.stop()
 
         viewModelScope.launch {
