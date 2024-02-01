@@ -59,8 +59,8 @@ class EzPlayActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             AppTheme {
-                BottomBar(navController) {
-                    NowPlayingScreen(nowPlayingViewModel)
+                BottomBar(navController) { paddingValues ->
+                    NowPlayingScreen(paddingValues, nowPlayingViewModel)
 
                     NavHost(
                         navController = navController,

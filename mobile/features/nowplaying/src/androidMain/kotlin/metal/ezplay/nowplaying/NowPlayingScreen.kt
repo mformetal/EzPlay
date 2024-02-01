@@ -5,10 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Colors
 import androidx.compose.material.TextFieldColors
 import androidx.compose.material.icons.Icons
@@ -31,17 +33,19 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun NowPlayingScreen(nowPlayingViewModel: NowPlayingViewModel) {
+fun NowPlayingScreen(paddingValues: PaddingValues, nowPlayingViewModel: NowPlayingViewModel) {
     val state by nowPlayingViewModel.uiState.collectAsState()
 
     state.song?.let { song ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            Row(verticalAlignment = Alignment.Bottom,
-                modifier = Modifier
+        Box(modifier = Modifier.fillMaxSize()
+            .zIndex(2f)
+            .padding(bottom = paddingValues.calculateBottomPadding())) {
+            Row(modifier = Modifier
+                    .align(Alignment.BottomCenter)
                     .background(
                         MaterialTheme.colorScheme.primaryContainer
-                    ).fillMaxWidth().zIndex(2f)) {
-                Column {
+                    ).fillMaxWidth()) {
+                Column(modifier = Modifier.weight(1f)) {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(text = song.name,
                             color = MaterialTheme.colorScheme.onPrimaryContainer ,style = MaterialTheme.typography.bodyLarge)
