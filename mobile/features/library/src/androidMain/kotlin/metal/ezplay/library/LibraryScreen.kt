@@ -23,6 +23,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import metal.ezplay.android.compose.extra_small_padding
 import metal.ezplay.android.compose.medium_padding
 import metal.ezplay.android.compose.small_padding
 import metal.ezplay.nowplaying.NowPlayingViewModel
@@ -34,7 +35,7 @@ fun LibraryScreen(viewModel: LibraryViewModel, nowPlayingViewModel: NowPlayingVi
     }
 
     val library by viewModel.uiState.collectAsState()
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(small_padding)) {
         items(library.songs) { song ->
             Row(modifier = Modifier.fillMaxWidth()
                 .padding(small_padding)
@@ -46,7 +47,7 @@ fun LibraryScreen(viewModel: LibraryViewModel, nowPlayingViewModel: NowPlayingVi
                     contentDescription = null
                 )
 
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(extra_small_padding)) {
                     Text(text = song.name, style = MaterialTheme.typography.bodyLarge)
                     Text(text = song.artist.name, style = MaterialTheme.typography.bodySmall)
                 }
