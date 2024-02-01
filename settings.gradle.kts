@@ -19,6 +19,7 @@ includeBuild("build-logic")
 
 include(":dto")
 include(":mobile:android:app")
+include(":mobile:android:compose-resources")
 include(":mobile:android:xml-resources")
 include(":mobile:features:library")
 include(":mobile:features:nowplaying")

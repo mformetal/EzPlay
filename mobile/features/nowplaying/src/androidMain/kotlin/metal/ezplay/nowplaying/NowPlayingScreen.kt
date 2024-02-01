@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Colors
 import androidx.compose.material.TextFieldColors
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -31,6 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import metal.ezplay.android.compose.medium_padding
+import metal.ezplay.android.compose.small_padding
+import metal.ezplay.android.xml.R as XmlR
 
 @Composable
 fun NowPlayingScreen(paddingValues: PaddingValues, nowPlayingViewModel: NowPlayingViewModel) {
@@ -44,7 +47,8 @@ fun NowPlayingScreen(paddingValues: PaddingValues, nowPlayingViewModel: NowPlayi
                     .align(Alignment.BottomCenter)
                     .background(
                         MaterialTheme.colorScheme.primaryContainer
-                    ).fillMaxWidth()) {
+                    ).fillMaxWidth()
+                .padding(small_padding)) {
                 Column(modifier = Modifier.weight(1f)) {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(text = song.name,
@@ -56,14 +60,14 @@ fun NowPlayingScreen(paddingValues: PaddingValues, nowPlayingViewModel: NowPlayi
                 }
 
                 IconButton(onClick = {
-                    if (state.isPlaying) {
-                        nowPlayingViewModel.pause()
-                    } else {
-                        nowPlayingViewModel.play()
-                    }
+                    nowPlayingViewModel.musicControlsClicked()
                 }) {
                     Icon(
-                        imageVector = if (state.isPlaying) Icons.Filled.PlayArrow else Icons.Filled.Pause,
+                        painter =
+                        painterResource(
+                            if (state.isPlaying) XmlR.drawable.baseline_pause_24 else
+                            XmlR.drawable.baseline_play_arrow_24
+                        ),
                         contentDescription = null
                     )
                 }

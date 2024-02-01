@@ -4,7 +4,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.ClickableText
@@ -20,6 +23,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import metal.ezplay.android.compose.medium_padding
+import metal.ezplay.android.compose.small_padding
 import metal.ezplay.nowplaying.NowPlayingViewModel
 
 @Composable
@@ -31,7 +36,9 @@ fun LibraryScreen(viewModel: LibraryViewModel, nowPlayingViewModel: NowPlayingVi
     val library by viewModel.uiState.collectAsState()
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(library.songs) { song ->
-            Row(modifier = Modifier.fillMaxWidth().clickable {
+            Row(modifier = Modifier.fillMaxWidth()
+                .padding(small_padding)
+                .clickable {
                 nowPlayingViewModel.play(song)
             }) {
                 AsyncImage(

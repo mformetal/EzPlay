@@ -4,6 +4,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
@@ -32,6 +33,14 @@ class NowPlayingViewModel(private val api: EzPlayApi,
     private val _uiState = MutableStateFlow(NowPlayingState())
     val uiState: StateFlow<NowPlayingState> = _uiState.asStateFlow()
 
+    fun musicControlsClicked() {
+        if (exoPlayer.isPlaying) {
+            pause()
+        } else {
+            play()
+        }
+    }
+
     fun play(song: SongDto) {
         val currentState = _uiState.value
         if (currentState.song == song) return
@@ -57,18 +66,26 @@ class NowPlayingViewModel(private val api: EzPlayApi,
                     exoPlayer.playWhenReady = true
 
                     _uiState.update {
-                        it.copy(song = song, isPlaying = exoPlayer.isPlaying)
+                        it.copy(song = song, isPlaying = true)
                     }
                 }
                 .collect()
         }
     }
 
-    fun pause() {
+    private fun pause() {
         exoPlayer.pause()
+
+        _uiState.update {
+            it.copy(isPlaying = false)
+        }
     }
 
-    fun play() {
+    private fun play() {
         exoPlayer.play()
+
+        _uiState.update {
+            it.copy(isPlaying = true)
+        }
     }
 }

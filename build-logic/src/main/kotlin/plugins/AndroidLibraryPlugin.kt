@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 
 class AndroidLibraryPlugin : Plugin<Project> {
@@ -18,6 +19,8 @@ class AndroidLibraryPlugin : Plugin<Project> {
     override fun apply(target: Project) = with (target) {
         apply<LibraryPlugin>()
         apply<KotlinAndroidPluginWrapper>()
+
+        kotlinExtension.jvmToolchain(17)
 
         pluginManager.withPlugin("com.android.library") {
             configure<LibraryExtension> {
@@ -29,11 +32,6 @@ class AndroidLibraryPlugin : Plugin<Project> {
 
                 defaultConfig {
                     minSdk = catalog().intVersion("android.minSdk")
-                }
-
-                compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_1_8
-                    targetCompatibility = JavaVersion.VERSION_1_8
                 }
 
                 composeOptions {
