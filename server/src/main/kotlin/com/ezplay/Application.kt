@@ -66,7 +66,7 @@ private fun Application.configureRouting() {
                                 name = it.name,
                                 album = AlbumDto(id = it.album.id.value,
                                     name = it.album.name),
-                                imageUrl = "http://10.0.0.2:8080/library/artwork/${it.id.value}",
+                                imageUrl = "",
                                 artist = ArtistDto(
                                     id = it.artist.id.value,
                                     name = it.artist.name
@@ -74,11 +74,6 @@ private fun Application.configureRouting() {
                             )
                         }
                 }
-
-                val file = File(DatabaseSingleton.query {
-                    SongEntity.all().first()
-                }.localPath)
-                val audioTag = AudioFileIO.read(file)
 
                 call.respond(songs)
             }
@@ -108,11 +103,11 @@ private fun Application.configureRouting() {
                 val audioFile = AudioFileIO.read(file)
                 val artwork = audioFile.tag.firstArtwork
                 val imageData = artwork?.binaryData
-                if (imageData == null) {
-                    call.respond(HttpStatusCode.NotFound)
-                } else {
-                   call.respondBytes(imageData, ContentType.Image.JPEG, HttpStatusCode.OK)
-                }
+//                if (imageData == null) {
+//                    call.respond(HttpStatusCode.NotFound)
+//                } else {
+//                   call.respondBytes(imageData, ContentType.Image.JPEG, HttpStatusCode.OK)
+//                }
             }
 
             get("download/{id}") {

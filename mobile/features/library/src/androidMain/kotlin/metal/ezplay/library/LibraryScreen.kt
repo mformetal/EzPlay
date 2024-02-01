@@ -1,8 +1,10 @@
 package metal.ezplay.library
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.ClickableText
@@ -13,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -28,17 +31,18 @@ fun LibraryScreen(viewModel: LibraryViewModel, nowPlayingViewModel: NowPlayingVi
     val library by viewModel.uiState.collectAsState()
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(library.songs) { song ->
-            AsyncImage(
-                model = song.imageUrl,
-                contentDescription = null,
-                onError = {
-                    val result = it.result
-                }
-            )
+            Row(modifier = Modifier.fillMaxWidth().clickable {
+                nowPlayingViewModel.play(song)
+            }) {
+                AsyncImage(
+                    model = song.imageUrl,
+                    contentDescription = null
+                )
 
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(text = song.name, style = MaterialTheme.typography.bodyLarge)
-                Text(text = song.artist.name, style = MaterialTheme.typography.bodySmall)
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(text = song.name, style = MaterialTheme.typography.bodyLarge)
+                    Text(text = song.artist.name, style = MaterialTheme.typography.bodySmall)
+                }
             }
             Divider()
         }

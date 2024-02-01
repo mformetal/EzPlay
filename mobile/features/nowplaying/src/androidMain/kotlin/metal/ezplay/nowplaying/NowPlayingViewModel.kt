@@ -16,10 +16,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import metal.ezplay.dto.SongDto
 import metal.ezplay.network.EzPlayApi
 import metal.ezplay.storage.MusicFileStorage
+import org.koin.core.component.getScopeId
 import java.io.File
 
 class NowPlayingViewModel(private val api: EzPlayApi,
@@ -27,10 +29,18 @@ class NowPlayingViewModel(private val api: EzPlayApi,
                           private val downloader: SongDownloader,
     private val musicFileStorage: MusicFileStorage) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(NowPlayingState.Empty)
+    private val _uiState = MutableStateFlow(NowPlayingState())
     val uiState: StateFlow<NowPlayingState> = _uiState.asStateFlow()
 
     fun play(song: SongDto) {
+        val currentState = _uiState.value
+        if (currentState.song == song) return
+
+        _uiState.update {
+            it.copy(song = null, isPlaying = false)
+        }
+        exoPlayer.stop()
+
         viewModelScope.launch {
             val preview = api.preview(song)
             val audioFile = musicFileStorage.createFile(preview.fileName)
@@ -39,16 +49,26 @@ class NowPlayingViewModel(private val api: EzPlayApi,
                     musicFileStorage.downloadInto(it.bodyAsChannel(), audioFile)
                 }
                 .onStart {
-                    println("START DOWNLOADING")
                 }
                 .onCompletion {
-                    println("DONE DOWNLOADING")
                     val mediaItem = MediaItem.fromUri(audioFile.toUri())
                     exoPlayer.setMediaItem(mediaItem)
                     exoPlayer.prepare()
                     exoPlayer.playWhenReady = true
+
+                    _uiState.update {
+                        it.copy(song = song, isPlaying = exoPlayer.isPlaying)
+                    }
                 }
                 .collect()
         }
+    }
+
+    fun pause() {
+        exoPlayer.pause()
+    }
+
+    fun play() {
+        exoPlayer.play()
     }
 }

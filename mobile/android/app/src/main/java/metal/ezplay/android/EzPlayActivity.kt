@@ -3,6 +3,7 @@ package metal.ezplay.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.internal.composableLambda
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
@@ -16,6 +17,7 @@ import io.ktor.serialization.kotlinx.json.json
 import metal.ezplay.library.LibraryScreen
 import metal.ezplay.library.LibraryViewModel
 import metal.ezplay.network.EzPlayApi
+import metal.ezplay.nowplaying.NowPlayingScreen
 import metal.ezplay.nowplaying.NowPlayingViewModel
 import metal.ezplay.nowplaying.SongDownloader
 import metal.ezplay.storage.AndroidDriverFactory
@@ -58,6 +60,8 @@ class EzPlayActivity : ComponentActivity() {
             val navController = rememberNavController()
             AppTheme {
                 BottomBar(navController) {
+                    NowPlayingScreen(nowPlayingViewModel)
+
                     NavHost(
                         navController = navController,
                         startDestination = "library"
