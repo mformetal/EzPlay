@@ -21,20 +21,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import metal.ezplay.dto.SongDto
 import metal.ezplay.network.EzPlayApi
+import metal.ezplay.player.MusicPlayer
 import metal.ezplay.storage.MusicFileStorage
 import org.koin.core.component.getScopeId
 import java.io.File
 
 class NowPlayingViewModel(private val api: EzPlayApi,
-    private val exoPlayer: ExoPlayer,
                           private val downloader: SongDownloader,
+                          private val musicPlayer: MusicPlayer,
     private val musicFileStorage: MusicFileStorage) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NowPlayingState())
     val uiState: StateFlow<NowPlayingState> = _uiState.asStateFlow()
 
     fun musicControlsClicked() {
-        if (exoPlayer.isPlaying) {
+        if (musicPlayer.isPlaying) {
             pause()
         } else {
             play()
@@ -42,7 +43,7 @@ class NowPlayingViewModel(private val api: EzPlayApi,
     }
 
     fun play(song: SongDto) {
-        exoPlayer.stop()
+        musicPlayer.stop()
 
         viewModelScope.launch {
             val preview = api.preview(song)
@@ -54,13 +55,10 @@ class NowPlayingViewModel(private val api: EzPlayApi,
                 .onStart {
                 }
                 .onCompletion {
-                    val mediaItem = MediaItem.fromUri(audioFile.toUri())
-                    exoPlayer.setMediaItem(mediaItem)
-                    exoPlayer.prepare()
-                    exoPlayer.playWhenReady = true
+                    musicPlayer.play(audioFile.toUri().toString())
 
                     _uiState.update {
-                        it.copy(song = song, isPlaying = true)
+                        it.copy(song = song, isPlaying = musicPlayer.isPlaying)
                     }
                 }
                 .collect()
@@ -68,18 +66,18 @@ class NowPlayingViewModel(private val api: EzPlayApi,
     }
 
     private fun pause() {
-        exoPlayer.pause()
+        musicPlayer.pause()
 
         _uiState.update {
-            it.copy(isPlaying = false)
+            it.copy(isPlaying = musicPlayer.isPlaying)
         }
     }
 
     private fun play() {
-        exoPlayer.play()
+        musicPlayer.play()
 
         _uiState.update {
-            it.copy(isPlaying = true)
+            it.copy(isPlaying = musicPlayer.isPlaying)
         }
     }
 }

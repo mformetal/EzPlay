@@ -72,10 +72,12 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.android.compose)
 
+    implementation(projects.mobile.android.composeResources)
     implementation(projects.mobile.android.xmlResources)
     implementation(projects.dto)
     implementation(projects.mobile.common.network)
     implementation(projects.mobile.common.storage)
+    implementation(projects.mobile.common.player)
     implementation(projects.mobile.features.library)
     implementation(projects.mobile.features.nowplaying)
 }

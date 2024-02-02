@@ -1,6 +1,7 @@
 package metal.ezplay.android
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHost
@@ -19,7 +21,7 @@ import metal.ezplay.android.xml.R as XmlR
 @Composable
 fun BottomBar(
     navController: NavController,
-    content: @Composable (PaddingValues) -> Unit) {
+    content: @Composable (Modifier) -> Unit) {
     Scaffold(
         bottomBar = {
             BottomNavigation {
@@ -34,5 +36,7 @@ fun BottomBar(
                     }
                 )
             }
-        }, content = content)
+        }, content = {
+            content(Modifier.padding(bottom = it.calculateBottomPadding()))
+        })
 }

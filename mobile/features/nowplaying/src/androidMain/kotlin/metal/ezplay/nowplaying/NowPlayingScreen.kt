@@ -36,13 +36,12 @@ import metal.ezplay.android.compose.small_padding
 import metal.ezplay.android.xml.R as XmlR
 
 @Composable
-fun NowPlayingScreen(paddingValues: PaddingValues, nowPlayingViewModel: NowPlayingViewModel) {
+fun NowPlayingScreen(modifier: Modifier, nowPlayingViewModel: NowPlayingViewModel) {
     val state by nowPlayingViewModel.uiState.collectAsState()
 
     state.song?.let { song ->
-        Box(modifier = Modifier.fillMaxSize()
-            .zIndex(2f)
-            .padding(bottom = paddingValues.calculateBottomPadding())) {
+        Box(modifier = modifier.fillMaxSize()
+            .zIndex(2f)) {
             Row(modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .background(

@@ -40,6 +40,7 @@ kotlin {
             implementation(projects.mobile.android.composeResources)
             implementation(projects.mobile.android.xmlResources)
             implementation(projects.mobile.common.storage)
+            implementation(projects.mobile.common.player)
         }
     }
 }
