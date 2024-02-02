@@ -21,14 +21,6 @@ class NowPlayingViewModel(
     private val _uiState = MutableStateFlow(NowPlayingState())
     val uiState: StateFlow<NowPlayingState> = _uiState.asStateFlow()
 
-    init {
-        musicPlayer.listener { state ->
-            if (state is MusicPlayerState.Playing) {
-
-            }
-        }
-    }
-
     fun musicControlsClicked() {
         if (musicPlayer.isPlaying) {
             pause()

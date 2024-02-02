@@ -16,22 +16,6 @@ class PlayerQueue(
 
     private val queue = mutableSetOf<Int>()
 
-    init {
-        player.listener { state ->
-            when (state) {
-                MusicPlayerState.Finished -> {
-                    playNext()
-                }
-                MusicPlayerState.Idle -> {
-                    // who cares I guess
-                }
-                MusicPlayerState.Playing -> {
-                    // get currently playing song from database?
-                }
-            }
-        }
-    }
-
     fun set(ids: List<Int>) {
         queue.clear()
         queue.addAll(ids)
