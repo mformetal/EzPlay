@@ -13,11 +13,11 @@ import metal.ezplay.dto.SongDto
 
 class EzPlayApi(private val client: HttpClient) {
 
-    suspend fun preview(songDto: SongDto): PreviewDto =
-        client.get(Routes.preview(songDto.id)).body()
+    suspend fun preview(songId: Int): PreviewDto =
+        client.get(Routes.preview(songId)).body()
 
-    suspend fun downloadChunk(songDto: SongDto, start: Long, end: Long): HttpResponse
-        = client.get(Routes.download(songDto.id)) {
+    suspend fun downloadChunk(songId: Int, start: Long, end: Long): HttpResponse
+        = client.get(Routes.download(songId)) {
             header("Range", "bytes=${start}-${end}")
         }
 

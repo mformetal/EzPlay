@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.android.mediaplayer)
 
     implementation(libs.common.ktor.serialization)
+    implementation(libs.common.io)
 
     implementation(libs.koin)
     implementation(libs.koin.android)

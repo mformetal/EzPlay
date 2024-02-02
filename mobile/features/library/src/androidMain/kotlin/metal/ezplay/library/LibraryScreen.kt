@@ -75,7 +75,7 @@ fun LibraryScreen(modifier: Modifier, viewModel: LibraryViewModel, nowPlayingVie
             modifier = Modifier.align(Alignment.BottomEnd)
                 .padding(medium_padding),
             onClick = {
-
+                viewModel.playButtonClicked()
             }
         ) {
             Icon(Icons.Filled.PlayArrow, "Play everything.")

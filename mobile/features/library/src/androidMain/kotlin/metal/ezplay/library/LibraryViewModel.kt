@@ -30,6 +30,10 @@ class LibraryViewModel(private val api: EzPlayApi,
         }
     }
 
+    fun playButtonClicked() {
+        
+    }
+
     private suspend fun updateDatabase(library: List<SongDto>) {
         withContext(Dispatchers.IO) {
             appDatabase.artistQueries.transaction {
