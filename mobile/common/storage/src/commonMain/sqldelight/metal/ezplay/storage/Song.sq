@@ -5,3 +5,8 @@ FROM song;
 insert:
 INSERT OR IGNORE INTO song (id, albumId, artistId, name)
 VALUES (?, ?, ?,?);
+
+findById:
+SELECT *
+FROM song
+WHERE id = ?;

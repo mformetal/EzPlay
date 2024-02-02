@@ -38,6 +38,7 @@ kotlin {
             implementation(projects.dto)
             implementation(projects.mobile.android.composeResources)
             implementation(projects.mobile.android.xmlResources)
+            implementation(projects.mobile.common.player)
             implementation(projects.mobile.features.nowplaying)
         }
     }

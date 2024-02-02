@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import metal.ezplay.dto.SongDto
 import metal.ezplay.player.MusicPlayer
+import metal.ezplay.player.MusicPlayerState
 import metal.ezplay.player.PlayerQueue
+import metal.ezplay.storage.AppDatabase
 
 class NowPlayingViewModel(
     private val musicPlayer: MusicPlayer,
@@ -18,6 +20,14 @@ class NowPlayingViewModel(
 
     private val _uiState = MutableStateFlow(NowPlayingState())
     val uiState: StateFlow<NowPlayingState> = _uiState.asStateFlow()
+
+    init {
+        musicPlayer.listener { state ->
+            if (state is MusicPlayerState.Playing) {
+
+            }
+        }
+    }
 
     fun musicControlsClicked() {
         if (musicPlayer.isPlaying) {

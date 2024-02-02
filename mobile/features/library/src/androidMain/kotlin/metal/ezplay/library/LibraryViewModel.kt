@@ -11,10 +11,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import metal.ezplay.dto.SongDto
 import metal.ezplay.network.EzPlayApi
+import metal.ezplay.player.PlayerQueue
 import metal.ezplay.storage.AppDatabase
 
 class LibraryViewModel(private val api: EzPlayApi,
-    private val appDatabase: AppDatabase) : ViewModel() {
+    private val appDatabase: AppDatabase,
+    private val queue: PlayerQueue
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LibraryState())
     val uiState: StateFlow<LibraryState> = _uiState.asStateFlow()
@@ -31,7 +34,12 @@ class LibraryViewModel(private val api: EzPlayApi,
     }
 
     fun playButtonClicked() {
-        
+        val songs = _uiState.value.songs.shuffled()
+        queue.set(
+            songs.map { song ->
+                song.id
+            }
+        )
     }
 
     private suspend fun updateDatabase(library: List<SongDto>) {

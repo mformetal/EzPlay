@@ -15,6 +15,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import metal.ezplay.library.LibraryScreen
@@ -42,7 +43,6 @@ class EzPlayActivity : ComponentActivity() {
 
         val driverFactory = AndroidDriverFactory(this)
         val database = createDatabase(driverFactory)
-        val libraryViewModel = LibraryViewModel(api, database)
         val extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
 
         val renderersFactory = DefaultRenderersFactory(applicationContext)
@@ -65,14 +65,18 @@ class EzPlayActivity : ComponentActivity() {
 
         val queue = PlayerQueue(
             lifecycleScope,
+            Dispatchers.Main,
             player,
-            downloader
+            downloader,
+            database
         )
 
         val nowPlayingViewModel = NowPlayingViewModel(
             player,
-            queue
+            queue,
         )
+
+        val libraryViewModel = LibraryViewModel(api, database, queue)
 
         setContent {
             val navController = rememberNavController()

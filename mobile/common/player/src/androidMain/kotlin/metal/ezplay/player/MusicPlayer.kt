@@ -15,13 +15,14 @@ actual class MusicPlayer(private val exoPlayer: ExoPlayer) {
         get() = exoPlayer.isPlaying
 
     actual fun play() {
-        exoPlayer.playbackState
         exoPlayer.play()
     }
 
     actual fun play(uri: String) {
         with (exoPlayer) {
-            val mediaItem = MediaItem.fromUri(uri)
+            val mediaItem = MediaItem.Builder()
+                .setUri(uri)
+                .build()
             setMediaItem(mediaItem)
             prepare()
             playWhenReady = true
@@ -47,6 +48,8 @@ actual class MusicPlayer(private val exoPlayer: ExoPlayer) {
                     onPlayerStateChanged(MusicPlayerState.Idle)
                 } else if (playbackState == Player.STATE_ENDED) {
                     onPlayerStateChanged(MusicPlayerState.Finished)
+                } else {
+                    // who knows
                 }
             }
         })
