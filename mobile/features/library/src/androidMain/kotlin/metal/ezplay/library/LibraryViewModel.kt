@@ -24,11 +24,14 @@ class LibraryViewModel(private val api: EzPlayApi,
 
     fun fetchLibrary() {
         viewModelScope.launch {
+            _uiState.update { state ->
+                state.copy(isLoading = true)
+            }
             val library = api.library()
             updateDatabase(library)
 
             _uiState.update { state ->
-                state.copy(songs = library)
+                state.copy(songs = library, isLoading = false)
             }
         }
     }

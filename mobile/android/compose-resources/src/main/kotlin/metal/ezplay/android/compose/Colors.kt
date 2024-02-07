@@ -1,4 +1,4 @@
-package metal.ezplay.android
+package metal.ezplay.android.compose
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

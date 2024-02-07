@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -29,10 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import metal.ezplay.android.compose.extra_small_padding
 import metal.ezplay.android.compose.medium_padding
 import metal.ezplay.android.compose.small_padding
@@ -47,6 +44,13 @@ fun LibraryScreen(modifier: Modifier, viewModel: LibraryViewModel, nowPlayingVie
     val library by viewModel.uiState.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
+        if (library.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.width(64.dp).align(Alignment.Center),
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        }
+
         LazyColumn(verticalArrangement = Arrangement.spacedBy(small_padding)) {
             items(library.songs) { song ->
                 Row(modifier = Modifier.fillMaxWidth()

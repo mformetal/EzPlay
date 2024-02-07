@@ -1,4 +1,4 @@
-package metal.ezplay.android
+package metal.ezplay.android.compose
 
 import androidx.compose.ui.graphics.Color
 
