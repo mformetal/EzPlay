@@ -13,6 +13,10 @@ kotlin {
             implementation(libs.common.ktor.core)
         }
 
+        commonTest.dependencies {
+            implementation(libs.testing)
+        }
+
         androidMain.dependencies {
             implementation(libs.android.mediaplayer)
         }
