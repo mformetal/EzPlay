@@ -6,6 +6,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.dto)
+            implementation(projects.mobile.common.logging)
             implementation(projects.mobile.common.network)
             implementation(projects.mobile.common.storage)
 
@@ -38,6 +39,7 @@ kotlin {
             implementation(projects.dto)
             implementation(projects.mobile.android.composeResources)
             implementation(projects.mobile.android.xmlResources)
+            implementation(projects.mobile.common.logging)
             implementation(projects.mobile.common.player)
             implementation(projects.mobile.features.nowplaying)
         }
