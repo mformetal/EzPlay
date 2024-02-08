@@ -63,10 +63,11 @@ class SongDownloaderTest {
                     )
                 )
             } else {
-                request.url.pathSegments.last()
                 respond(
                     ByteReadChannel(
-                        ByteArray(fileSize.toInt())
+                        ByteArray(fileSize.toInt()) {
+                            it.toByte()
+                        }
                     )
                 )
             }

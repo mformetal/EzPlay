@@ -9,9 +9,12 @@ import extensions.stringVersion
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
@@ -20,6 +23,12 @@ class KmpLibraryPlugin : Plugin<Project> {
     override fun apply(target: Project) = with (target) {
         apply<KotlinMultiplatformPluginWrapper>()
         apply<LibraryPlugin>()
+
+        tasks.withType<Test>().configureEach {
+            testLogging {
+                showStandardStreams = true
+            }
+        }
 
         kotlinExtension.sourceSets.maybeCreate("androidMain").dependencies {
             implementation(catalog().library("android.compose.runtime"))
