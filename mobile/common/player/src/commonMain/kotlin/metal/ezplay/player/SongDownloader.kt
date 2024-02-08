@@ -2,6 +2,7 @@ package metal.ezplay.player
 
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
+import io.ktor.http.isSuccess
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.consumeEachBufferRange
 import io.ktor.utils.io.core.ByteReadPacket
@@ -57,17 +58,24 @@ class SongDownloader(private val ezPlayApi: EzPlayApi,
             var downloaded = 0L
 
             while (downloaded < preview.fileSize) {
-                val next = ezPlayApi.downloadChunk(
+                val chunk = ezPlayApi.downloadChunk(
                     songId,
                     downloaded,
                     downloaded + chunkSize
                 )
-                emit(next)
+                emit(chunk)
 
                 downloaded += chunkSize
             }
         }
     }
+
+    private suspend fun doDownload(songId: Int, downloaded: Long, chunkSize: Long): HttpResponse =
+        ezPlayApi.downloadChunk(
+            songId,
+            downloaded,
+            downloaded + chunkSize
+        )
 
     private suspend fun downloadInto(channel: ByteReadChannel, sink: Sink) {
         while (!channel.isClosedForRead) {

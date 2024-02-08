@@ -15,6 +15,10 @@ kotlin {
 
         commonTest.dependencies {
             implementation(libs.testing)
+            implementation(libs.testing.coroutines)
+            implementation(libs.testing.ktor.client)
+            implementation(libs.common.ktor.content.negotiation)
+            implementation(libs.common.ktor.serialization)
         }
 
         androidMain.dependencies {
