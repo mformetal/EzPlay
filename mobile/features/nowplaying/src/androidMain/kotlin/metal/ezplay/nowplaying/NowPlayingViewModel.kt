@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import metal.ezplay.dto.SongDto
+import metal.ezplay.multiplatform.dto.SongDto
 import metal.ezplay.player.MusicPlayer
 import metal.ezplay.player.MusicPlayerState
 import metal.ezplay.player.PlayerQueue

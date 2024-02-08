@@ -1,4 +1,4 @@
-package metal.ezplay.dto
+package metal.ezplay.multiplatform.dto
 
 import kotlinx.serialization.Serializable
 

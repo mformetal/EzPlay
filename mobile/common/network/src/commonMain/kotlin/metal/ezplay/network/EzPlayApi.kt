@@ -7,9 +7,9 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.utils.io.ByteReadChannel
-import metal.ezplay.dto.ArtistDto
-import metal.ezplay.dto.PreviewDto
-import metal.ezplay.dto.SongDto
+import metal.ezplay.multiplatform.dto.ArtistDto
+import metal.ezplay.multiplatform.dto.PreviewDto
+import metal.ezplay.multiplatform.dto.SongDto
 
 class EzPlayApi(private val client: HttpClient) {
 

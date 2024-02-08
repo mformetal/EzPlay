@@ -40,7 +40,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.dto)
+            implementation(projects.multiplatform.dto)
 
             implementation(libs.common.ktor.core)
             implementation(libs.common.ktor.content.negotiation)

@@ -1,7 +1,7 @@
 package metal.ezplay.library
 
 import androidx.compose.runtime.Composable
-import metal.ezplay.dto.SongDto
+import metal.ezplay.multiplatform.dto.SongDto
 
 @Composable
 fun SongItem(songDto: SongDto) {

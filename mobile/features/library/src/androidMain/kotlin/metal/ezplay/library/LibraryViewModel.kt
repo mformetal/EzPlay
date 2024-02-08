@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import metal.ezplay.dto.SongDto
+import metal.ezplay.multiplatform.dto.SongDto
+import metal.ezplay.multiplatform.extensions.takeIfInstance
 import metal.ezplay.network.EzPlayApi
 import metal.ezplay.player.PlayerQueue
 import metal.ezplay.storage.AppDatabase
@@ -25,24 +26,30 @@ class LibraryViewModel(private val api: EzPlayApi,
     fun fetchLibrary() {
         viewModelScope.launch {
             _uiState.update { state ->
-                state.copy(isLoading = true)
+                state.copy(data = LibraryDataState.Loading)
             }
             val library = api.library()
             updateDatabase(library)
 
             _uiState.update { state ->
-                state.copy(songs = library, isLoading = false)
+                state.copy(data = LibraryDataState.Success(library))
             }
         }
     }
 
     fun playButtonClicked() {
-        val songs = _uiState.value.songs.shuffled()
-        queue.set(
-            songs.map { song ->
-                song.id
+        _uiState
+            .value
+            .data
+            .takeIfInstance<LibraryDataState.Success>()
+            ?.let { success ->
+                val songs = success.items.shuffled()
+                queue.set(
+                    songs.map { song: SongDto ->
+                        song.id
+                    }
+                )
             }
-        )
     }
 
     private suspend fun updateDatabase(library: List<SongDto>) {

@@ -3,7 +3,7 @@ package metal.ezplay.storage
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.core.isEmpty
 import io.ktor.utils.io.core.readBytes
-import metal.ezplay.dto.SongDto
+import metal.ezplay.multiplatform.dto.SongDto
 import java.io.File
 import java.io.FileOutputStream
 

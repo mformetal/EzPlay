@@ -14,7 +14,7 @@ sqldelight {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.dto)
+            implementation(projects.multiplatform.dto)
             implementation(projects.mobile.common.entities)
             implementation(projects.mobile.common.network)
 
@@ -47,7 +47,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.android.compose)
 
-            implementation(projects.dto)
+            implementation(projects.multiplatform.dto)
         }
     }
 }

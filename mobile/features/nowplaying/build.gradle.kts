@@ -5,7 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.dto)
+            implementation(projects.multiplatform.dto)
             implementation(projects.mobile.common.network)
 
             implementation(libs.common.ktor.core)
@@ -36,7 +36,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.android.compose)
 
-            implementation(projects.dto)
+            implementation(projects.multiplatform.dto)
             implementation(projects.mobile.android.composeResources)
             implementation(projects.mobile.android.xmlResources)
             implementation(projects.mobile.common.storage)

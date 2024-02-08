@@ -1,6 +1,6 @@
 package metal.ezplay.nowplaying
 
-import metal.ezplay.dto.SongDto
+import metal.ezplay.multiplatform.dto.SongDto
 
 data class NowPlayingState(
     val song: SongDto? = null,

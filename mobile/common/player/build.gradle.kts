@@ -5,7 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.dto)
+            implementation(projects.multiplatform.dto)
             implementation(projects.mobile.common.network)
             implementation(projects.mobile.common.storage)
 

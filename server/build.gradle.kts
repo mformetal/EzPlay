@@ -43,7 +43,7 @@ dependencies {
     implementation(libs.h2)
     implementation("io.ktor:ktor-server-partial-content-jvm:2.3.7")
 
-    implementation(projects.dto)
+    implementation(projects.multiplatform.dto)
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")

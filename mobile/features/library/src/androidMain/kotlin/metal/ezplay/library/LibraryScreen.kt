@@ -3,6 +3,7 @@ package metal.ezplay.library
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import metal.ezplay.android.compose.extra_small_padding
 import metal.ezplay.android.compose.medium_padding
 import metal.ezplay.android.compose.small_padding
+import metal.ezplay.multiplatform.extensions.takeIfInstance
 import metal.ezplay.nowplaying.NowPlayingViewModel
 
 @Composable
@@ -42,37 +44,13 @@ fun LibraryScreen(modifier: Modifier, viewModel: LibraryViewModel, nowPlayingVie
     }
 
     val library by viewModel.uiState.collectAsState()
+    val dataState = library.data
 
     Box(modifier = modifier.fillMaxSize()) {
-        if (library.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.width(64.dp).align(Alignment.Center),
-                color = MaterialTheme.colorScheme.secondary,
-            )
-        }
-
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(small_padding)) {
-            items(library.songs) { song ->
-                Row(modifier = Modifier.fillMaxWidth()
-                    .padding(small_padding)
-                    .clickable {
-                        nowPlayingViewModel.play(song)
-                    }) {
-//                    AsyncImage(
-//                        model = song.imageUrl,
-//                        contentDescription = null,
-//                        onError = {
-//                            println(it.result.throwable.message)
-//                        }
-//                    )
-
-                    Column(verticalArrangement = Arrangement.spacedBy(extra_small_padding)) {
-                        Text(text = song.name, style = MaterialTheme.typography.bodyLarge)
-                        Text(text = song.artist.name, style = MaterialTheme.typography.bodySmall)
-                    }
-                }
-                Divider()
-            }
+        when (dataState) {
+            LibraryDataState.Loading -> LoadingState()
+            LibraryDataState.Error -> TODO()
+            is LibraryDataState.Success -> SuccessState(nowPlayingViewModel, dataState)
         }
 
         FloatingActionButton(
@@ -83,6 +61,41 @@ fun LibraryScreen(modifier: Modifier, viewModel: LibraryViewModel, nowPlayingVie
             }
         ) {
             Icon(Icons.Filled.PlayArrow, "Play everything.")
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.LoadingState() {
+    CircularProgressIndicator(
+        modifier = Modifier.width(64.dp).align(Alignment.Center),
+        color = MaterialTheme.colorScheme.secondary,
+    )
+}
+
+@Composable
+private fun SuccessState(nowPlayingViewModel: NowPlayingViewModel, state: LibraryDataState.Success) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(small_padding)) {
+        items(state.items) { song ->
+            Row(modifier = Modifier.fillMaxWidth()
+                .padding(small_padding)
+                .clickable {
+                    nowPlayingViewModel.play(song)
+                }) {
+//                    AsyncImage(
+//                        model = song.imageUrl,
+//                        contentDescription = null,
+//                        onError = {
+//                            println(it.result.throwable.message)
+//                        }
+//                    )
+
+                Column(verticalArrangement = Arrangement.spacedBy(extra_small_padding)) {
+                    Text(text = song.name, style = MaterialTheme.typography.bodyLarge)
+                    Text(text = song.artist.name, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            Divider()
         }
     }
 }

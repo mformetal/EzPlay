@@ -17,7 +17,7 @@ import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import metal.ezplay.dto.PreviewDto
+import metal.ezplay.multiplatform.dto.PreviewDto
 import metal.ezplay.network.EzPlayApi
 import kotlin.test.BeforeTest
 import kotlin.test.AfterTest
