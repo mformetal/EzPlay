@@ -2,9 +2,7 @@ package metal.ezplay.library
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.get
 import io.ktor.client.request.post
-import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +25,8 @@ class LibraryViewModel(private val client: HttpClient,
     private val queue: PlayerQueue
 ) : MultiplatformViewModel() {
 
+    private var pagingState: LibraryPagingState ?= null
+
     private val _uiState = MutableStateFlow(LibraryState())
     val uiState: StateFlow<LibraryState> = _uiState.asStateFlow()
 
@@ -36,12 +36,21 @@ class LibraryViewModel(private val client: HttpClient,
                 state.copy(data = LibraryDataState.Loading)
             }
             val library = client.post(Routes.LIBRARY) {
-                setBody(PagedSongListRequest(1))
+                setBody(PagedSongListRequest(pagingState?.current ?: 1))
             }.body<PagedSongListResponse>()
+
+            if (pagingState == null) {
+                pagingState = LibraryPagingState(
+                    previous = library.previous,
+                    next = library.next,
+                    current = library.current,
+                )
+            }
             updateDatabase(library.songs)
 
             _uiState.update { state ->
-                state.copy(data = LibraryDataState.Success(library.songs))
+                val existingItems = state.data.takeIfInstance<LibraryDataState.Success>()?.items ?: emptyList()
+                state.copy(data = LibraryDataState.Success(library.songs + existingItems))
             }
         }
     }

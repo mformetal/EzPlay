@@ -1,4 +1,9 @@
 package metal.ezplay.multiplatform.extensions
 
 @Suppress("UNCHECKED_CAST")
-fun <T> Any.takeIfInstance(): T? = (this as? T)
+inline fun <reified T : Any> Any.takeIfInstance(): T? =
+    if (this is T) {
+        this
+    } else {
+        null
+    }

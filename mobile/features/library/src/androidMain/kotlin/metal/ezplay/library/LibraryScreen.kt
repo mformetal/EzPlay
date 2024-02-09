@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -27,7 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -81,15 +84,7 @@ private fun SuccessState(nowPlayingViewModel: NowPlayingViewModel, state: Librar
                 .padding(small_padding)
                 .clickable {
                     nowPlayingViewModel.play(song)
-                }) {
-//                    AsyncImage(
-//                        model = song.imageUrl,
-//                        contentDescription = null,
-//                        onError = {
-//                            println(it.result.throwable.message)
-//                        }
-//                    )
-
+            }) {
                 Column(verticalArrangement = Arrangement.spacedBy(extra_small_padding)) {
                     Text(text = song.name, style = MaterialTheme.typography.bodyLarge)
                     Text(text = song.artist.name, style = MaterialTheme.typography.bodySmall)

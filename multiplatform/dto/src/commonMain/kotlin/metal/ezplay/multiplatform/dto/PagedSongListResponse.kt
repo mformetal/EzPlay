@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 class PagedSongListResponse(
     val previous: Int?,
     val next: Int?,
+    val current: Int,
     val songs: List<SongDto>
 )

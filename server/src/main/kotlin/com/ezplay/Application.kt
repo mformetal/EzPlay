@@ -106,7 +106,8 @@ private fun Application.configureRouting() {
                 call.respond(PagedSongListResponse(
                     previous = previousNumber,
                     next = nextPageNumber,
-                    songs = songs
+                    songs = songs,
+                    current = pageNumber
                 ))
             }
 
