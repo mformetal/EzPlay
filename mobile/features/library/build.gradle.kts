@@ -34,6 +34,7 @@ kotlin {
             implementation(libs.android.activity.compose)
             implementation(libs.android.ktor.contentnegotiation)
             implementation(libs.android.ktor.okhttp)
+            implementation(libs.android.paging)
             implementation(libs.common.ktor.serialization)
 
             implementation(libs.koin)

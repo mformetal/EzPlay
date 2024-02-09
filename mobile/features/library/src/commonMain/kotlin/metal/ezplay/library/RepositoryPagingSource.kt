@@ -26,7 +26,7 @@ class SongPagingSource(
     val httpResponse = client.post(Routes.LIBRARY) {
       setBody(PagedSongListRequest(page))
     }
-    
+
     return when {
       httpResponse.status.isSuccess() -> {
         val response = httpResponse.body<PagedSongListResponse>()

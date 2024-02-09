@@ -11,6 +11,8 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpRequestRetry
@@ -19,7 +21,6 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -29,6 +30,7 @@ import kotlinx.io.files.SystemFileSystem
 import metal.ezplay.android.compose.AppTheme
 import metal.ezplay.library.LibraryScreen
 import metal.ezplay.library.LibraryViewModel
+import metal.ezplay.library.SongPagingSource
 import metal.ezplay.logging.SystemOut
 import metal.ezplay.nowplaying.NowPlayingScreen
 import metal.ezplay.nowplaying.NowPlayingViewModel
@@ -37,7 +39,6 @@ import metal.ezplay.player.PlayerQueue
 import metal.ezplay.player.SongDownloader
 import metal.ezplay.storage.AndroidDriverFactory
 import metal.ezplay.storage.createDatabase
-import org.slf4j.event.LoggingEvent
 
 class EzPlayActivity : ComponentActivity() {
 
@@ -100,7 +101,11 @@ class EzPlayActivity : ComponentActivity() {
             queue,
         )
 
-        val libraryViewModel = LibraryViewModel(client, database, queue)
+        val pagingConfig = PagingConfig(pageSize = 100, initialLoadSize = 100)
+        val pager = Pager(pagingConfig) {
+            SongPagingSource(client)
+        }
+        val libraryViewModel = LibraryViewModel(database, queue, pager)
 
         setContent {
             val navController = rememberNavController()

@@ -11,13 +11,16 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.testing.Test
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 
 class KmpLibraryPlugin : Plugin<Project> {
     override fun apply(target: Project) = with (target) {
@@ -28,6 +31,14 @@ class KmpLibraryPlugin : Plugin<Project> {
             testLogging {
                 showStandardStreams = true
             }
+        }
+
+        configure<KotlinMultiplatformExtension> {
+            androidTarget()
+
+            jvm()
+
+            jvmToolchain(catalog().intVersion("jvm"))
         }
 
         kotlinExtension.sourceSets.maybeCreate("androidMain").dependencies {
@@ -63,8 +74,8 @@ class KmpLibraryPlugin : Plugin<Project> {
                 }
 
                 compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_1_8
-                    targetCompatibility = JavaVersion.VERSION_1_8
+                    sourceCompatibility = JavaVersion.VERSION_11
+                    targetCompatibility = JavaVersion.VERSION_11
                 }
 
                 composeOptions {

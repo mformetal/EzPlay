@@ -1,75 +1,59 @@
 package metal.ezplay.library
 
+import androidx.lifecycle.viewModelScope
+import androidx.paging.flatMap
+import app.cash.paging.LoadState
+import app.cash.paging.LoadStates
 import app.cash.paging.Pager
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
+import app.cash.paging.PagingData
+import app.cash.paging.compose.collectAsLazyPagingItems
+import app.cash.paging.flatMap
+import app.cash.paging.map
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import metal.ezplay.multiplatform.dto.PagedSongListRequest
-import metal.ezplay.multiplatform.dto.PagedSongListResponse
 import metal.ezplay.multiplatform.dto.SongDto
 import metal.ezplay.multiplatform.extensions.takeIfInstance
-import metal.ezplay.network.Routes
 import metal.ezplay.player.PlayerQueue
 import metal.ezplay.storage.AppDatabase
 import metal.ezplay.viewmodel.MultiplatformViewModel
 
-class LibraryViewModel(private val client: HttpClient,
+class LibraryViewModel(
     private val appDatabase: AppDatabase,
     private val queue: PlayerQueue,
     private val pager: Pager<Int, SongDto>
 ) : MultiplatformViewModel() {
 
-    private var pagingState: LibraryPagingState ?= null
+    val songs: Flow<PagingData<SongDto>> = pager.flow
 
-    private val _uiState = MutableStateFlow(LibraryState())
-    val uiState: StateFlow<LibraryState> = _uiState.asStateFlow()
+    init {
+        viewModelScope.launch {
+            pager.flow
+                .map {
+                    it.map {
 
-    fun fetchLibrary() {
-        scope.launch {
-            _uiState.update { state ->
-                state.copy(data = LibraryDataState.Loading)
-            }
-            val library = client.post(Routes.LIBRARY) {
-                setBody(PagedSongListRequest(pagingState?.current ?: 1))
-            }.body<PagedSongListResponse>()
-
-            if (pagingState == null) {
-                pagingState = LibraryPagingState(
-                    previous = library.previous,
-                    next = library.next,
-                    current = library.current,
-                )
-            }
-            updateDatabase(library.songs)
-
-            _uiState.update { state ->
-                val existingItems = state.data.takeIfInstance<LibraryDataState.Success>()?.items ?: emptyList()
-                state.copy(data = LibraryDataState.Success(library.songs + existingItems))
-            }
+                    }
+                }
         }
     }
 
     fun playButtonClicked() {
-        _uiState
-            .value
-            .data
-            .takeIfInstance<LibraryDataState.Success>()
-            ?.let { success ->
-                val songs = success.items.shuffled()
-                queue.set(
-                    songs.map { song: SongDto ->
-                        song.id
-                    }
-                )
-            }
+//        _uiState
+//            .value
+//            .data
+//            .takeIfInstance<LibraryDataState.Success>()
+//            ?.let { success ->
+//                val songs = success.items.shuffled()
+//                queue.set(
+//                    songs.map { song: SongDto ->
+//                        song.id
+//                    }
+//                )
+//            }
     }
 
     private suspend fun updateDatabase(library: List<SongDto>) {
