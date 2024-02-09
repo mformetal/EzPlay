@@ -9,9 +9,7 @@ import io.ktor.http.ContentDisposition
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.serialization.suitableCharset
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
@@ -29,18 +27,12 @@ import io.ktor.server.response.respondFile
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import io.ktor.server.websocket.WebSockets
-import io.ktor.server.websocket.converter
-import io.ktor.server.websocket.sendSerialized
-import io.ktor.server.websocket.webSocket
-import io.ktor.util.reflect.typeInfo
 import io.ktor.utils.io.jvm.javaio.copyTo
-import io.ktor.websocket.serialization.sendSerializedBase
 import kotlinx.serialization.json.Json
-import metal.ezplay.multiplatform.dto.AlbumDto
-import metal.ezplay.multiplatform.dto.ArtistDto
-import metal.ezplay.multiplatform.dto.PreviewDto
-import metal.ezplay.multiplatform.dto.SongDto
+import metal.ezplay.dto.AlbumDto
+import metal.ezplay.dto.ArtistDto
+import metal.ezplay.dto.PreviewDto
+import metal.ezplay.dto.SongDto
 import org.jaudiotagger.audio.AudioFileIO
 import java.io.File
 import java.nio.file.Files
@@ -48,7 +40,6 @@ import kotlin.io.path.writeBytes
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = {
-        configureWebSockets()
         configureContentNegotiation()
         configureRouting()
         configureTemplating()
@@ -126,21 +117,14 @@ private fun Application.configureRouting() {
                     }.first()
                 }
 
-
-            }
-
-            webSocket("download_ws/{id}") {
-                val song = DatabaseSingleton.query {
-                    SongEntity.find {
-                        Songs.id eq call.parameters["id"]!!.toInt()
-                    }.first()
-                }
                 val file = File(song.localPath)
-
-                val previewDto = PreviewDto(
-                    fileSize = file.length(),
-                    fileName = file.name
+                call.response.status(HttpStatusCode.OK)
+                call.response.header(
+                    HttpHeaders.ContentDisposition,
+                    ContentDisposition.File.withParameter(ContentDisposition.Parameters.FileName, file.name)
+                        .toString()
                 )
+                call.respondFile(file)
             }
 
             get("play/{id}") {
@@ -181,15 +165,6 @@ private fun Application.configureTemplating() {
 private fun Application.configureContentNegotiation() {
     install(ContentNegotiation) {
         json(Json {
-            prettyPrint = true
-            isLenient = true
-        })
-    }
-}
-
-private fun Application.configureWebSockets() {
-    install(WebSockets) {
-        contentConverter = KotlinxWebsocketSerializationConverter(Json {
             prettyPrint = true
             isLenient = true
         })

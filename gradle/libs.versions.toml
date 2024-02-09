@@ -58,11 +58,9 @@ common-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", 
 common-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "dateTime" }
 common-io = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version = "0.3.1" }
 common-ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-common-ktor-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 common-ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 common-ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 common-ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-common-ktor-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
 
 # TESTING
 testing = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

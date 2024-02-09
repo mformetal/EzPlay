@@ -31,7 +31,6 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-freemarker")
     implementation("io.ktor:ktor-server-content-negotiation")
-    implementation("io.ktor:ktor-server-websockets-jvm")
     implementation(libs.common.ktor.serialization)
     implementation("io.ktor:ktor-server-partial-content")
     implementation(libs.kotlinx.serialization)

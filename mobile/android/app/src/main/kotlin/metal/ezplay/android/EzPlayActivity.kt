@@ -27,6 +27,7 @@ import metal.ezplay.android.compose.AppTheme
 import metal.ezplay.library.LibraryScreen
 import metal.ezplay.library.LibraryViewModel
 import metal.ezplay.logging.SystemOut
+import metal.ezplay.network.EzPlayApi
 import metal.ezplay.nowplaying.NowPlayingScreen
 import metal.ezplay.nowplaying.NowPlayingViewModel
 import metal.ezplay.player.MusicPlayer
@@ -46,7 +47,6 @@ class EzPlayActivity : ComponentActivity() {
             retryOnServerErrors(maxRetries = 5)
             exponentialDelay()
         }
-        install(WebSockets)
         install(Logging) {
             logger = object: Logger {
                 override fun log(message: String) {
@@ -56,6 +56,7 @@ class EzPlayActivity : ComponentActivity() {
             level = LogLevel.ALL
         }
     }
+    private val api = EzPlayApi(client)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +78,7 @@ class EzPlayActivity : ComponentActivity() {
 
         val player = MusicPlayer(exoPlayer)
         val downloader = SongDownloader(
-            client,
+            api,
             SystemFileSystem,
             Path(filesDir.path)
         )
@@ -95,7 +96,7 @@ class EzPlayActivity : ComponentActivity() {
             queue,
         )
 
-        val libraryViewModel = LibraryViewModel(client, database, queue)
+        val libraryViewModel = LibraryViewModel(api, database, queue)
 
         setContent {
             val navController = rememberNavController()

@@ -2,9 +2,6 @@ package metal.ezplay.library
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,11 +11,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import metal.ezplay.multiplatform.dto.SongDto
 import metal.ezplay.multiplatform.extensions.takeIfInstance
-import metal.ezplay.network.Routes
+import metal.ezplay.network.EzPlayApi
 import metal.ezplay.player.PlayerQueue
 import metal.ezplay.storage.AppDatabase
 
-class LibraryViewModel(private val client: HttpClient,
+class LibraryViewModel(private val api: EzPlayApi,
     private val appDatabase: AppDatabase,
     private val queue: PlayerQueue
 ) : ViewModel() {
@@ -31,7 +28,7 @@ class LibraryViewModel(private val client: HttpClient,
             _uiState.update { state ->
                 state.copy(data = LibraryDataState.Loading)
             }
-            val library = client.get(Routes.LIBRARY).body<List<SongDto>>()
+            val library = api.library()
             updateDatabase(library)
 
             _uiState.update { state ->
