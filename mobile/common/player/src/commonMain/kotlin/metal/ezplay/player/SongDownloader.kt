@@ -1,5 +1,9 @@
 package metal.ezplay.player
 
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.utils.io.ByteReadChannel
@@ -13,15 +17,16 @@ import kotlinx.io.Sink
 import kotlinx.io.buffered
 import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
-import metal.ezplay.network.EzPlayApi
+import metal.ezplay.multiplatform.dto.PreviewDto
+import metal.ezplay.network.Routes
 import kotlin.math.max
 
-class SongDownloader(private val ezPlayApi: EzPlayApi,
+class SongDownloader(private val client: HttpClient,
     private val fileSystem: FileSystem,
     private val internalFileStorage: Path) {
 
     suspend fun download(songId: Int): Path {
-        val preview = ezPlayApi.preview(songId)
+        val preview = client.get(Routes.preview(songId)).body<PreviewDto>()
         val audioFile = audioFilePath(preview.fileName)
         if (fileSystem.exists(audioFile)) return audioFile
 
@@ -35,16 +40,14 @@ class SongDownloader(private val ezPlayApi: EzPlayApi,
     private fun audioFilePath(name: String): Path = Path(internalFileStorage, name)
 
     private suspend fun downloadFile(sink: Sink, songId: Int) {
-        val preview = ezPlayApi.preview(songId)
+        val preview = client.get(Routes.preview(songId)).body<PreviewDto>()
         val chunkSize = max(DEFAULT_BUFFER_SIZE.toLong(), preview.fileSize.div(10))
         var downloaded = 0L
 
         while (downloaded < preview.fileSize) {
-            val chunk = ezPlayApi.downloadChunk(
-                songId,
-                downloaded,
-                downloaded + chunkSize
-            )
+            val chunk = client.get(Routes.download(songId)) {
+                header("Range", "bytes=${downloaded}-${downloaded + chunkSize}")
+            }
             writeTo(sink, chunk)
 
             downloaded += chunkSize

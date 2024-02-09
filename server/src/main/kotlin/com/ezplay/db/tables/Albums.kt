@@ -1,6 +1,6 @@
 package com.ezplay.db.tables
 
-import metal.ezplay.dto.AlbumDto
+import metal.ezplay.multiplatform.dto.AlbumDto
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

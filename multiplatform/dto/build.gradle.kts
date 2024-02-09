@@ -8,6 +8,8 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization)
         }
+
+        jvm()
     }
 }
 

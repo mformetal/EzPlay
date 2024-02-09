@@ -18,21 +18,26 @@ import io.ktor.server.freemarker.FreeMarker
 import io.ktor.server.freemarker.FreeMarkerContent
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.doublereceive.DoubleReceive
 import io.ktor.server.plugins.partialcontent.PartialContent
+import io.ktor.server.request.receive
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
 import io.ktor.server.response.respondBytesWriter
 import io.ktor.server.response.respondFile
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.utils.io.jvm.javaio.copyTo
 import kotlinx.serialization.json.Json
-import metal.ezplay.dto.AlbumDto
-import metal.ezplay.dto.ArtistDto
-import metal.ezplay.dto.PreviewDto
-import metal.ezplay.dto.SongDto
+import metal.ezplay.multiplatform.dto.AlbumDto
+import metal.ezplay.multiplatform.dto.ArtistDto
+import metal.ezplay.multiplatform.dto.PagedSongListRequest
+import metal.ezplay.multiplatform.dto.PagedSongListResponse
+import metal.ezplay.multiplatform.dto.PreviewDto
+import metal.ezplay.multiplatform.dto.SongDto
 import org.jaudiotagger.audio.AudioFileIO
 import java.io.File
 import java.nio.file.Files
@@ -44,6 +49,7 @@ fun main() {
         configureRouting()
         configureTemplating()
         configurePartialContent()
+        install(DoubleReceive)
 
         DatabaseSingleton.init()
         DatabaseSingleton.populate(this, coroutineContext)
@@ -57,9 +63,17 @@ private fun Application.configureRouting() {
         }
 
         route("library") {
-            get {
+            post {
+                val pageSize = 100L
+                val request = call.receive<PagedSongListRequest>()
+                val pageNumber = request.page
+                val offset = (pageNumber - 1) * pageSize
+                val numSongs = DatabaseSingleton.query {
+                    SongEntity.count()
+                }
                 val songs = DatabaseSingleton.query {
                     SongEntity.all()
+                        .limit(n = pageSize.toInt(), offset = offset)
                         .map {
                             SongDto(
                                 id = it.id.value,
@@ -75,7 +89,25 @@ private fun Application.configureRouting() {
                         }
                 }
 
-                call.respond(songs)
+                val lastPage = numSongs.div(pageSize)
+
+                val previousNumber = if (pageNumber == 1) {
+                    null
+                } else {
+                    pageNumber.dec()
+                }
+
+                val nextPageNumber = if (pageNumber.toLong() == lastPage) {
+                    null
+                } else {
+                    pageNumber.inc()
+                }
+
+                call.respond(PagedSongListResponse(
+                    previous = previousNumber,
+                    next = nextPageNumber,
+                    songs = songs
+                ))
             }
 
             get("preview/{id}") {

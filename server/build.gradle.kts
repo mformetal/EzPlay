@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.exposed.jdbc)
     implementation(libs.h2)
     implementation("io.ktor:ktor-server-partial-content-jvm")
+    implementation("io.ktor:ktor-server-double-receive")
 
     implementation(projects.multiplatform.dto)
 

@@ -11,6 +11,7 @@ kotlin {
             implementation(projects.mobile.common.logging)
             implementation(projects.mobile.common.network)
             implementation(projects.mobile.common.storage)
+            implementation(projects.mobile.common.viewmodel)
 
             implementation(libs.common.ktor.core)
             implementation(libs.common.ktor.content.negotiation)

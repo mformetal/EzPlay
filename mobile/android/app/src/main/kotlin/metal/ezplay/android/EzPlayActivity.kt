@@ -15,10 +15,13 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.io.files.Path
@@ -27,7 +30,6 @@ import metal.ezplay.android.compose.AppTheme
 import metal.ezplay.library.LibraryScreen
 import metal.ezplay.library.LibraryViewModel
 import metal.ezplay.logging.SystemOut
-import metal.ezplay.network.EzPlayApi
 import metal.ezplay.nowplaying.NowPlayingScreen
 import metal.ezplay.nowplaying.NowPlayingViewModel
 import metal.ezplay.player.MusicPlayer
@@ -40,6 +42,9 @@ import org.slf4j.event.LoggingEvent
 class EzPlayActivity : ComponentActivity() {
 
     private val client = HttpClient(OkHttp) {
+        defaultRequest {
+            contentType(ContentType.Application.Json)
+        }
         install(ContentNegotiation) {
             json()
         }
@@ -56,7 +61,6 @@ class EzPlayActivity : ComponentActivity() {
             level = LogLevel.ALL
         }
     }
-    private val api = EzPlayApi(client)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +82,7 @@ class EzPlayActivity : ComponentActivity() {
 
         val player = MusicPlayer(exoPlayer)
         val downloader = SongDownloader(
-            api,
+            client,
             SystemFileSystem,
             Path(filesDir.path)
         )
@@ -96,7 +100,7 @@ class EzPlayActivity : ComponentActivity() {
             queue,
         )
 
-        val libraryViewModel = LibraryViewModel(api, database, queue)
+        val libraryViewModel = LibraryViewModel(client, database, queue)
 
         setContent {
             val navController = rememberNavController()

@@ -1,7 +1,11 @@
 package metal.ezplay.library
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.request
+import io.ktor.client.request.setBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,30 +13,35 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import metal.ezplay.multiplatform.dto.PagedSongListRequest
+import metal.ezplay.multiplatform.dto.PagedSongListResponse
 import metal.ezplay.multiplatform.dto.SongDto
 import metal.ezplay.multiplatform.extensions.takeIfInstance
-import metal.ezplay.network.EzPlayApi
+import metal.ezplay.network.Routes
 import metal.ezplay.player.PlayerQueue
 import metal.ezplay.storage.AppDatabase
+import metal.ezplay.viewmodel.MultiplatformViewModel
 
-class LibraryViewModel(private val api: EzPlayApi,
+class LibraryViewModel(private val client: HttpClient,
     private val appDatabase: AppDatabase,
     private val queue: PlayerQueue
-) : ViewModel() {
+) : MultiplatformViewModel() {
 
     private val _uiState = MutableStateFlow(LibraryState())
     val uiState: StateFlow<LibraryState> = _uiState.asStateFlow()
 
     fun fetchLibrary() {
-        viewModelScope.launch {
+        scope.launch {
             _uiState.update { state ->
                 state.copy(data = LibraryDataState.Loading)
             }
-            val library = api.library()
-            updateDatabase(library)
+            val library = client.post(Routes.LIBRARY) {
+                setBody(PagedSongListRequest(1))
+            }.body<PagedSongListResponse>()
+            updateDatabase(library.songs)
 
             _uiState.update { state ->
-                state.copy(data = LibraryDataState.Success(library))
+                state.copy(data = LibraryDataState.Success(library.songs))
             }
         }
     }
