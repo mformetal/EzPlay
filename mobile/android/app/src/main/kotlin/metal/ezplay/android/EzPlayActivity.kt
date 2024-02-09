@@ -15,6 +15,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +26,7 @@ import kotlinx.io.files.SystemFileSystem
 import metal.ezplay.android.compose.AppTheme
 import metal.ezplay.library.LibraryScreen
 import metal.ezplay.library.LibraryViewModel
+import metal.ezplay.logging.SystemOut
 import metal.ezplay.nowplaying.NowPlayingScreen
 import metal.ezplay.nowplaying.NowPlayingViewModel
 import metal.ezplay.player.MusicPlayer
@@ -30,6 +34,7 @@ import metal.ezplay.player.PlayerQueue
 import metal.ezplay.player.SongDownloader
 import metal.ezplay.storage.AndroidDriverFactory
 import metal.ezplay.storage.createDatabase
+import org.slf4j.event.LoggingEvent
 
 class EzPlayActivity : ComponentActivity() {
 
@@ -42,6 +47,14 @@ class EzPlayActivity : ComponentActivity() {
             exponentialDelay()
         }
         install(WebSockets)
+        install(Logging) {
+            logger = object: Logger {
+                override fun log(message: String) {
+                    SystemOut.debug(message)
+                }
+            }
+            level = LogLevel.ALL
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

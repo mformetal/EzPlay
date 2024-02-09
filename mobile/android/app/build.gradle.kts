@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.android.ktor.okhttp)
     implementation(libs.android.mediaplayer)
 
+    implementation(libs.common.ktor.logging)
     implementation(libs.common.ktor.serialization)
     implementation(libs.common.io)
 
@@ -77,6 +78,7 @@ dependencies {
     implementation(projects.mobile.android.xmlResources)
     implementation(projects.multiplatform.dto)
     implementation(projects.mobile.common.network)
+    implementation(projects.mobile.common.logging)
     implementation(projects.mobile.common.storage)
     implementation(projects.mobile.common.player)
     implementation(projects.mobile.features.library)

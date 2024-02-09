@@ -42,7 +42,7 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.exposed.jdbc)
     implementation(libs.h2)
-    implementation("io.ktor:ktor-server-partial-content-jvm:2.3.7")
+    implementation("io.ktor:ktor-server-partial-content-jvm")
 
     implementation(projects.multiplatform.dto)
 
