@@ -36,8 +36,6 @@ class KmpLibraryPlugin : Plugin<Project> {
         configure<KotlinMultiplatformExtension> {
             androidTarget()
 
-            jvm()
-
             jvmToolchain(catalog().intVersion("jvm"))
         }
 

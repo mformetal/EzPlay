@@ -38,7 +38,10 @@ import metal.ezplay.multiplatform.dto.PagedSongListRequest
 import metal.ezplay.multiplatform.dto.PagedSongListResponse
 import metal.ezplay.multiplatform.dto.PreviewDto
 import metal.ezplay.multiplatform.dto.SongDto
+import metal.ezplay.multiplatform.dto.SongId
 import org.jaudiotagger.audio.AudioFileIO
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.writeBytes
@@ -109,6 +112,18 @@ private fun Application.configureRouting() {
                     songs = songs,
                     current = pageNumber
                 ))
+            }
+
+            get("ids") {
+                val songs = DatabaseSingleton.query {
+                    Songs.slice(Songs.id)
+                        .selectAll()
+                        .map {
+                            SongId(id = it[Songs.id].value)
+                        }
+                }
+
+                call.respond(songs)
             }
 
             get("preview/{id}") {

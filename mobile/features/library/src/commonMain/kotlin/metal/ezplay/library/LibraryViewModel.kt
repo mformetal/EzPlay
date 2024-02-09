@@ -33,9 +33,9 @@ class LibraryViewModel(
     init {
         viewModelScope.launch {
             pager.flow
-                .map {
-                    it.map {
-
+                .map { pagingData ->
+                    pagingData.map { song ->
+                        updateDatabase(song)
                     }
                 }
         }
@@ -56,36 +56,30 @@ class LibraryViewModel(
 //            }
     }
 
-    private suspend fun updateDatabase(library: List<SongDto>) {
+    private suspend fun updateDatabase(song: SongDto) {
         withContext(Dispatchers.IO) {
             appDatabase.artistQueries.transaction {
-                library.forEach { song ->
-                    appDatabase.artistQueries.insert(
-                        song.id.toLong(),
-                        song.name
-                    )
-                }
+                appDatabase.artistQueries.insert(
+                    song.id.toLong(),
+                    song.name
+                )
             }
 
             appDatabase.albumQueries.transaction {
-                library.forEach { song ->
-                    appDatabase.albumQueries.insert(
-                        song.album.id.toLong(),
-                        song.artist.id.toLong(),
-                        song.album.name
-                    )
-                }
+                appDatabase.albumQueries.insert(
+                    song.album.id.toLong(),
+                    song.artist.id.toLong(),
+                    song.album.name
+                )
             }
 
             appDatabase.songQueries.transaction {
-                library.forEach { song ->
-                    appDatabase.songQueries.insert(
-                        song.id.toLong(),
-                        song.album.id.toLong(),
-                        song.artist.id.toLong(),
-                        song.name
-                    )
-                }
+                appDatabase.songQueries.insert(
+                    song.id.toLong(),
+                    song.album.id.toLong(),
+                    song.artist.id.toLong(),
+                    song.name
+                )
             }
         }
     }
