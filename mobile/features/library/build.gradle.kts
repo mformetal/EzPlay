@@ -16,6 +16,7 @@ kotlin {
             implementation(libs.common.ktor.core)
             implementation(libs.common.ktor.content.negotiation)
             implementation(libs.common.ktor.serialization)
+            implementation(libs.common.paging)
         }
 
         androidMain.dependencies {
