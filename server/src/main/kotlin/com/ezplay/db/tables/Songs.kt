@@ -1,7 +1,7 @@
 package com.ezplay.db.tables
 
 import kotlinx.io.files.Path
-import metal.ezplay.dto.SongDto
+import metal.ezplay.multiplatform.dto.SongDto
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

@@ -1,64 +1,63 @@
 package metal.ezplay.player
 
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsChannel
-import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.core.isEmpty
-import io.ktor.utils.io.core.readBytes
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.io.Sink
-import kotlinx.io.buffered
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
+import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.contentType
+import io.ktor.http.headers
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readText
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
 import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
-import metal.ezplay.network.EzPlayApi
-import kotlin.math.max
+import metal.ezplay.network.Routes
 
-class SongDownloader(private val ezPlayApi: EzPlayApi,
+class SongDownloader(private val client: HttpClient,
     private val fileSystem: FileSystem,
     private val internalFileStorage: Path) {
 
-    suspend fun download(songId: Int): Path {
-        val preview = ezPlayApi.preview(songId)
-        val audioFile = audioFilePath(preview.fileName)
-        if (fileSystem.exists(audioFile)) return audioFile
-
-        fileSystem.sink(audioFile).buffered()
-            .use { sink ->
-                downloadFile(sink, songId)
-            }
-        return audioFile
+    private val webSocketClient = HttpClient(CIO) {
+        install(WebSockets)
     }
 
-    private fun audioFilePath(name: String): Path = Path(internalFileStorage, name)
+    suspend fun download(songId: Int) {
+        webSocketClient.webSocket(
+            urlString = Routes.websocket(songId),
+            request = {
+                headers {
+                    append(HttpHeaders.Accept, ContentType.Any.toString())
+                    append(HttpHeaders.ContentType, ContentType.Any.toString())
+                    append(HttpHeaders.Connection, "Upgrade")
+                }
+            },
+            block = {
+                val outputRoutine = launch { output() }
+                val inputRoutine = launch { input() }
 
-    private suspend fun downloadFile(sink: Sink, songId: Int) {
-        val preview = ezPlayApi.preview(songId)
-        val chunkSize = max(DEFAULT_BUFFER_SIZE.toLong(), preview.fileSize.div(10))
-        var downloaded = 0L
-
-        while (downloaded < preview.fileSize) {
-            val chunk = ezPlayApi.downloadChunk(
-                songId,
-                downloaded,
-                downloaded + chunkSize
-            )
-            writeTo(sink, chunk)
-
-            downloaded += chunkSize
-        }
+                inputRoutine.join() // Wait for completion; either "exit" or error
+                outputRoutine.cancelAndJoin()
+            }
+        )
     }
 
-    private suspend fun writeTo(sink: Sink, response: HttpResponse) {
-        val channel = response.bodyAsChannel()
-        while (!channel.isClosedForRead) {
-            val packet = channel.readRemaining(DEFAULT_BUFFER_SIZE.toLong())
-            while (!packet.isEmpty) {
-                val bytes = packet.readBytes()
-                sink.write(bytes)
-            }
-        }
+    suspend fun DefaultClientWebSocketSession.output() {
+//        try {
+//            for (message in incoming) {
+//                println("MESSAGE: $message")
+////                message as? Frame.Text ?: continue
+////                println(message.readText())
+//            }
+//        } catch (e: Exception) {
+//            println("Error while receiving: " + e.localizedMessage)
+//        }
+    }
+
+    suspend fun DefaultClientWebSocketSession.input() {
+
     }
 }

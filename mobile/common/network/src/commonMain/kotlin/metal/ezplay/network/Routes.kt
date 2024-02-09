@@ -10,5 +10,7 @@ object Routes {
 
     fun download(songId: Int) = LIBRARY.plus("/download/$songId")
 
+    fun websocket(songId: Int) = LIBRARY.plus("/download_ws/$songId")
+
     fun play(songId: Int) = LIBRARY.plus("/play/$songId")
 }

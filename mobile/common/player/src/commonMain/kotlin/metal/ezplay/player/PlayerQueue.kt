@@ -35,11 +35,14 @@ class PlayerQueue(
 
     fun now(songId: Int) {
         scope.launch {
-            val path = withContext(backgroundDispatcher) {
+            withContext(backgroundDispatcher) {
                 downloader.download(songId)
             }
-
-            player.play(path.toString())
+//            val path = withContext(backgroundDispatcher) {
+//                downloader.download(songId)
+//            }
+//
+//            player.play(path.toString())
         }
     }
 

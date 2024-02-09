@@ -15,6 +15,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.io.files.Path
@@ -22,7 +23,6 @@ import kotlinx.io.files.SystemFileSystem
 import metal.ezplay.android.compose.AppTheme
 import metal.ezplay.library.LibraryScreen
 import metal.ezplay.library.LibraryViewModel
-import metal.ezplay.network.EzPlayApi
 import metal.ezplay.nowplaying.NowPlayingScreen
 import metal.ezplay.nowplaying.NowPlayingViewModel
 import metal.ezplay.player.MusicPlayer
@@ -41,8 +41,8 @@ class EzPlayActivity : ComponentActivity() {
             retryOnServerErrors(maxRetries = 5)
             exponentialDelay()
         }
+        install(WebSockets)
     }
-    private val api = EzPlayApi(client)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +64,7 @@ class EzPlayActivity : ComponentActivity() {
 
         val player = MusicPlayer(exoPlayer)
         val downloader = SongDownloader(
-            api,
+            client,
             SystemFileSystem,
             Path(filesDir.path)
         )
@@ -82,7 +82,7 @@ class EzPlayActivity : ComponentActivity() {
             queue,
         )
 
-        val libraryViewModel = LibraryViewModel(api, database, queue)
+        val libraryViewModel = LibraryViewModel(client, database, queue)
 
         setContent {
             val navController = rememberNavController()

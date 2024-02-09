@@ -10,6 +10,7 @@ kotlin {
             implementation(projects.mobile.common.storage)
 
             implementation(libs.common.io)
+            implementation(libs.common.ktor.cio)
             implementation(libs.common.ktor.core)
         }
 
