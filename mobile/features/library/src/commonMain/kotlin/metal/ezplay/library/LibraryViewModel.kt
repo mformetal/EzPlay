@@ -1,5 +1,6 @@
 package metal.ezplay.library
 
+import app.cash.paging.Pager
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -22,7 +23,8 @@ import metal.ezplay.viewmodel.MultiplatformViewModel
 
 class LibraryViewModel(private val client: HttpClient,
     private val appDatabase: AppDatabase,
-    private val queue: PlayerQueue
+    private val queue: PlayerQueue,
+    private val pager: Pager<Int, SongDto>
 ) : MultiplatformViewModel() {
 
     private var pagingState: LibraryPagingState ?= null
