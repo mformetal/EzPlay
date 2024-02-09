@@ -40,6 +40,7 @@ import metal.ezplay.multiplatform.dto.PreviewDto
 import metal.ezplay.multiplatform.dto.SongDto
 import metal.ezplay.multiplatform.dto.SongId
 import org.jaudiotagger.audio.AudioFileIO
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
@@ -76,6 +77,7 @@ private fun Application.configureRouting() {
                 }
                 val songs = DatabaseSingleton.query {
                     SongEntity.all()
+                        .orderBy(Songs.name to SortOrder.DESC)
                         .limit(n = pageSize.toInt(), offset = offset)
                         .map {
                             SongDto(
