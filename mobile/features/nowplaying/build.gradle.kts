@@ -26,15 +26,14 @@ kotlin {
             implementation(libs.android.compose.preview)
             implementation(libs.android.compose.tooling)
             implementation(libs.android.activity.compose)
+            implementation(libs.android.koin)
+            implementation(libs.android.koin.compose)
             implementation(libs.android.ktor.contentnegotiation)
             implementation(libs.android.ktor.okhttp)
             implementation(libs.android.mediaplayer)
 
+            implementation(libs.common.koin)
             implementation(libs.common.ktor.serialization)
-
-            implementation(libs.koin)
-            implementation(libs.koin.android)
-            implementation(libs.koin.android.compose)
 
             implementation(projects.multiplatform.dto)
             implementation(projects.mobile.android.composeResources)

@@ -62,18 +62,17 @@ dependencies {
     implementation(libs.android.compose.runtime)
     implementation(libs.android.activity.compose)
     implementation(libs.android.activity.compose)
+    implementation(libs.android.koin)
+    implementation(libs.android.koin.compose)
     implementation(libs.android.ktor.contentnegotiation)
     implementation(libs.android.ktor.okhttp)
     implementation(libs.android.mediaplayer)
     implementation(libs.android.paging)
 
+    implementation(libs.common.koin)
     implementation(libs.common.ktor.logging)
     implementation(libs.common.ktor.serialization)
     implementation(libs.common.io)
-
-    implementation(libs.koin)
-    implementation(libs.koin.android)
-    implementation(libs.koin.android.compose)
 
     implementation(projects.mobile.android.composeResources)
     implementation(projects.mobile.android.xmlResources)
@@ -82,6 +81,7 @@ dependencies {
     implementation(projects.mobile.common.logging)
     implementation(projects.mobile.common.storage)
     implementation(projects.mobile.common.player)
+    implementation(projects.mobile.common.viewmodel)
     implementation(projects.mobile.features.library)
     implementation(projects.mobile.features.nowplaying)
 }

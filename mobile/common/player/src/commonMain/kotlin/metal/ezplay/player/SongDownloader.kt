@@ -17,8 +17,11 @@ import kotlinx.io.Sink
 import kotlinx.io.buffered
 import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
 import metal.ezplay.multiplatform.dto.PreviewDto
 import metal.ezplay.network.Routes
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.scope.Scope
 import kotlin.math.max
 
 class SongDownloader(private val client: HttpClient,
@@ -64,4 +67,12 @@ class SongDownloader(private val client: HttpClient,
             }
         }
     }
+}
+
+actual fun Scope.createSongDownloader(): SongDownloader {
+    return SongDownloader(
+        get(),
+        SystemFileSystem,
+        Path(androidContext().filesDir.path)
+    )
 }

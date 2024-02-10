@@ -4,14 +4,12 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import metal.ezplay.storage.AppDatabase
 
 class PlayerQueue(
     private val scope: CoroutineScope,
     private val backgroundDispatcher: CoroutineDispatcher,
     private val player: MusicPlayer,
-    private val downloader: SongDownloader,
-    private val database: AppDatabase
+    private val downloader: SongDownloader
 ) {
 
     private val queue = mutableSetOf<Int>()

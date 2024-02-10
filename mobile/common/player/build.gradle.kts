@@ -10,6 +10,7 @@ kotlin {
             implementation(projects.mobile.common.storage)
 
             implementation(libs.common.io)
+            implementation(libs.common.koin)
             implementation(libs.common.ktor.core)
         }
 
@@ -22,6 +23,7 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation(libs.android.koin)
             implementation(libs.android.mediaplayer)
         }
     }

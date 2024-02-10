@@ -18,7 +18,6 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import metal.ezplay.multiplatform.dto.PreviewDto
-import metal.ezplay.network.EzPlayApi
 import kotlin.test.BeforeTest
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -97,11 +96,11 @@ class SongDownloaderTest {
         engine = MockEngine(handler)
 
         downloader = SongDownloader(
-            ezPlayApi = EzPlayApi(HttpClient(engine) {
+            client = HttpClient(engine) {
                 install(ContentNegotiation) {
                     json()
                 }
-            }),
+            },
             fileSystem = SystemFileSystem,
             internalFileStorage = fileDirectory
         )

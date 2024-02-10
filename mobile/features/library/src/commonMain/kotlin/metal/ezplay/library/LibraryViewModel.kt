@@ -1,30 +1,20 @@
 package metal.ezplay.library
 
 import androidx.lifecycle.viewModelScope
-import androidx.paging.flatMap
-import app.cash.paging.LoadState
-import app.cash.paging.LoadStates
 import app.cash.paging.Pager
 import app.cash.paging.PagingData
-import app.cash.paging.compose.collectAsLazyPagingItems
-import app.cash.paging.flatMap
 import app.cash.paging.map
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import metal.ezplay.multiplatform.dto.SongDto
-import metal.ezplay.multiplatform.extensions.takeIfInstance
-import metal.ezplay.player.PlayerQueue
 import metal.ezplay.storage.AppDatabase
 import metal.ezplay.viewmodel.MultiplatformViewModel
 
 class LibraryViewModel(
     private val appDatabase: AppDatabase,
-    private val queue: PlayerQueue,
     private val pager: Pager<Int, SongDto>
 ) : MultiplatformViewModel() {
 
@@ -39,21 +29,6 @@ class LibraryViewModel(
                     }
                 }
         }
-    }
-
-    fun playButtonClicked() {
-//        _uiState
-//            .value
-//            .data
-//            .takeIfInstance<LibraryDataState.Success>()
-//            ?.let { success ->
-//                val songs = success.items.shuffled()
-//                queue.set(
-//                    songs.map { song: SongDto ->
-//                        song.id
-//                    }
-//                )
-//            }
     }
 
     private suspend fun updateDatabase(song: SongDto) {

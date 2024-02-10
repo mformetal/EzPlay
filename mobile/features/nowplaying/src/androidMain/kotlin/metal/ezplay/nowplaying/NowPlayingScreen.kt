@@ -5,15 +5,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Colors
 import androidx.compose.material.TextFieldColors
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
@@ -36,40 +42,57 @@ import metal.ezplay.android.compose.small_padding
 import metal.ezplay.android.xml.R as XmlR
 
 @Composable
-fun NowPlayingScreen(modifier: Modifier, nowPlayingViewModel: NowPlayingViewModel) {
+fun ColumnScope.NowPlayingScreen(modifier: Modifier, nowPlayingViewModel: NowPlayingViewModel) {
     val state by nowPlayingViewModel.uiState.collectAsState()
 
-    state.song?.let { song ->
-        Box(modifier = modifier.fillMaxSize()
-            .zIndex(2f)) {
-            Row(modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .background(
-                        MaterialTheme.colorScheme.primaryContainer
-                    ).fillMaxWidth()
-                .padding(small_padding)) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(text = song.name,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer ,style = MaterialTheme.typography.bodyLarge)
-                        Text(text = song.artist.name,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = MaterialTheme.typography.bodySmall)
-                    }
+    Box(modifier = modifier
+        .zIndex(2f)) {
+        Row(modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .background(
+                MaterialTheme.colorScheme.primaryContainer
+            ).fillMaxWidth()
+            .padding(small_padding)) {
+            Column(modifier = Modifier.weight(1f)) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(text = "SONG",
+                        color = MaterialTheme.colorScheme.onPrimaryContainer ,style = MaterialTheme.typography.bodyLarge)
+                    Text(text = "ARTIST",
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        style = MaterialTheme.typography.bodySmall)
                 }
+            }
 
-                IconButton(onClick = {
-                    nowPlayingViewModel.musicControlsClicked()
-                }) {
-                    Icon(
-                        painter =
-                        painterResource(
-                            if (state.isPlaying) XmlR.drawable.baseline_pause_24 else
+            IconButton(onClick = {
+
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null
+                )
+            }
+
+            IconButton(onClick = {
+                nowPlayingViewModel.musicControlsClicked()
+            }) {
+                Icon(
+                    modifier = Modifier.size(64.dp),
+                    painter =
+                    painterResource(
+                        if (state.isPlaying) XmlR.drawable.baseline_pause_24 else
                             XmlR.drawable.baseline_play_arrow_24
-                        ),
-                        contentDescription = null
-                    )
-                }
+                    ),
+                    contentDescription = null
+                )
+            }
+
+            IconButton(onClick = {
+                nowPlayingViewModel.musicControlsClicked()
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null
+                )
             }
         }
     }

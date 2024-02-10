@@ -7,6 +7,8 @@ import androidx.media3.common.Player.State
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.scope.Scope
 import java.io.File
 
 actual class MusicPlayer(private val exoPlayer: ExoPlayer) {
@@ -54,4 +56,20 @@ actual class MusicPlayer(private val exoPlayer: ExoPlayer) {
             }
         })
     }
+}
+
+actual fun Scope.createMusicPlayer(): MusicPlayer {
+    val extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
+    val renderersFactory = DefaultRenderersFactory(androidContext())
+        .setExtensionRendererMode(extensionRendererMode)
+        .setEnableDecoderFallback(true)
+    val trackSelector = DefaultTrackSelector(androidContext())
+    val exoPlayer = ExoPlayer.Builder(androidContext(), renderersFactory)
+        .setTrackSelector(trackSelector)
+        .build().apply {
+            trackSelectionParameters = DefaultTrackSelector.Parameters.Builder(androidContext()).build()
+            playWhenReady = false
+        }
+
+    return MusicPlayer(exoPlayer)
 }
