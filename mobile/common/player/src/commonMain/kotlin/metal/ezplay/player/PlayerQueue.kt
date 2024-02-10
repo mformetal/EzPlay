@@ -7,6 +7,7 @@ import kotlinx.coroutines.withContext
 
 class PlayerQueue(
     private val scope: CoroutineScope,
+    private val mainDispatcher: CoroutineDispatcher,
     private val backgroundDispatcher: CoroutineDispatcher,
     private val player: MusicPlayer,
     private val downloader: SongDownloader
@@ -37,7 +38,9 @@ class PlayerQueue(
                 downloader.download(songId)
             }
 
-            player.play(path.toString())
+            withContext(mainDispatcher) {
+                player.play(path.toString())
+            }
         }
     }
 

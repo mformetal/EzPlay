@@ -12,10 +12,11 @@ val playerModule = module {
     single { createSongDownloader() }
     single {
         PlayerQueue(
-            GlobalScope,
-            Dispatchers.Main,
-            get<MusicPlayer>(),
-            get<SongDownloader>()
+            scope = GlobalScope,
+            mainDispatcher = Dispatchers.Main,
+            backgroundDispatcher = Dispatchers.IO,
+            player = get<MusicPlayer>(),
+            downloader = get<SongDownloader>()
         )
     }
 }
