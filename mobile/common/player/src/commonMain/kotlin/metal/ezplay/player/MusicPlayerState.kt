@@ -4,7 +4,7 @@ sealed class MusicPlayerState {
 
     object Playing : MusicPlayerState()
 
-    object Idle : MusicPlayerState()
+    object Paused : MusicPlayerState()
 
-    object Finished : MusicPlayerState()
+    object Idle : MusicPlayerState()
 }

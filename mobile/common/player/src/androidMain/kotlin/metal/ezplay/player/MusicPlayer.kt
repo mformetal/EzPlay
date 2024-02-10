@@ -7,11 +7,38 @@ import androidx.media3.common.Player.State
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.scope.Scope
 import java.io.File
 
-actual class MusicPlayer(private val exoPlayer: ExoPlayer) {
+actual class MusicPlayer(private val exoPlayer: ExoPlayer,
+    private val mainDispatcher: CoroutineDispatcher) {
+
+    private val listenerFlow = MutableSharedFlow<MusicPlayerState>()
+
+    init {
+        exoPlayer.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                GlobalScope.launch(mainDispatcher) {
+                    if (exoPlayer.playWhenReady && playbackState == Player.STATE_READY) {
+                        listenerFlow.emit(MusicPlayerState.Playing)
+                    } else if (exoPlayer.playWhenReady) {
+                        listenerFlow.emit(MusicPlayerState.Paused)
+                    } else {
+                        // player paused in any state
+                        listenerFlow.emit(MusicPlayerState.Idle)
+                    }
+                }
+            }
+        })
+    }
 
     actual val isPlaying: Boolean
         get() = exoPlayer.isPlaying
@@ -39,23 +66,7 @@ actual class MusicPlayer(private val exoPlayer: ExoPlayer) {
         exoPlayer.stop()
     }
 
-    actual fun listener(onPlayerStateChanged: (MusicPlayerState) -> Unit) {
-        exoPlayer.addListener(object : Player.Listener {
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                super.onPlaybackStateChanged(playbackState)
-
-                if (exoPlayer.playWhenReady && playbackState == Player.STATE_READY) {
-                    onPlayerStateChanged(MusicPlayerState.Playing)
-                } else if (playbackState == Player.STATE_IDLE) {
-                    onPlayerStateChanged(MusicPlayerState.Idle)
-                } else if (playbackState == Player.STATE_ENDED) {
-                    onPlayerStateChanged(MusicPlayerState.Finished)
-                } else {
-                    // who knows
-                }
-            }
-        })
-    }
+    actual suspend fun playerState(): Flow<MusicPlayerState> = listenerFlow
 }
 
 actual fun Scope.createMusicPlayer(): MusicPlayer {
@@ -71,5 +82,5 @@ actual fun Scope.createMusicPlayer(): MusicPlayer {
             playWhenReady = false
         }
 
-    return MusicPlayer(exoPlayer)
+    return MusicPlayer(exoPlayer, Dispatchers.Main)
 }

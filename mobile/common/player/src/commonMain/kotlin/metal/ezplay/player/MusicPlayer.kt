@@ -1,10 +1,12 @@
 package metal.ezplay.player
 
+import kotlinx.coroutines.flow.Flow
+
 expect class MusicPlayer {
 
     val isPlaying: Boolean
 
-    fun listener(onPlayerStateChanged: (MusicPlayerState) -> Unit)
+    suspend fun playerState(): Flow<MusicPlayerState>
 
     fun play()
 

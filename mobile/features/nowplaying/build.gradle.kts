@@ -6,7 +6,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.multiplatform.dto)
+            implementation(projects.mobile.common.logging)
             implementation(projects.mobile.common.network)
+            implementation(projects.mobile.common.viewmodel)
 
             implementation(libs.common.ktor.core)
             implementation(libs.common.ktor.content.negotiation)
