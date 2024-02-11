@@ -1,16 +1,17 @@
 package metal.ezplay.player
 
 import kotlinx.coroutines.flow.Flow
+import metal.ezplay.multiplatform.dto.SongDto
 
 expect class MusicPlayer {
 
     val isPlaying: Boolean
 
-    suspend fun playerState(): Flow<MusicPlayerState>
+    val playerState: Flow<MusicPlayerState>
 
     fun play()
 
-    fun play(uri: String)
+    fun play(songDto: SongDto, uri: String)
 
     fun pause()
 

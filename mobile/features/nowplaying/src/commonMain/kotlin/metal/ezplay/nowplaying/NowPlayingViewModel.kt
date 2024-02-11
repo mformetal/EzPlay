@@ -25,12 +25,7 @@ class NowPlayingViewModel(
     val uiState: StateFlow<NowPlayingState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            musicPlayer.playerState()
-                .collect {
-                    SystemOut.debug("STATE: $it")
-                }
-        }
+        listenToPlayerState()
     }
 
     fun musicControlsClicked() {
@@ -44,22 +39,41 @@ class NowPlayingViewModel(
     fun play(song: SongDto) {
         musicPlayer.stop()
 
-        queue.now(song.id)
+        queue.now(song)
     }
 
     private fun pause() {
         musicPlayer.pause()
-
-        _uiState.update {
-            it.copy(isPlaying = musicPlayer.isPlaying)
-        }
     }
 
     private fun play() {
         musicPlayer.play()
+    }
 
-        _uiState.update {
-            it.copy(isPlaying = musicPlayer.isPlaying)
+    private fun listenToPlayerState() {
+        viewModelScope.launch {
+            musicPlayer.playerState
+                .collect { playerState ->
+                    when (playerState) {
+                        MusicPlayerState.Idle -> { }
+                        MusicPlayerState.Loading -> { }
+                        MusicPlayerState.Paused -> {
+                            _uiState.update {
+                                it.copy(isPlaying = false)
+                            }
+                        }
+                        is MusicPlayerState.Playing -> {
+                            _uiState.update {
+                                it.copy(
+                                    songName = playerState.songDto.name,
+                                    artistName = playerState.songDto.artist.name,
+                                    progress = playerState.elapsed.toFloat().div(playerState.total.toFloat()),
+                                    isPlaying = true
+                                )
+                            }
+                        }
+                    }
+                }
         }
     }
 }

@@ -6,6 +6,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.multiplatform.dto)
+            implementation(projects.multiplatform.extensions)
             implementation(projects.mobile.common.logging)
             implementation(projects.mobile.common.network)
             implementation(projects.mobile.common.viewmodel)
@@ -38,6 +39,7 @@ kotlin {
             implementation(libs.common.ktor.serialization)
 
             implementation(projects.multiplatform.dto)
+            implementation(projects.multiplatform.extensions)
             implementation(projects.mobile.android.composeResources)
             implementation(projects.mobile.android.xmlResources)
             implementation(projects.mobile.common.storage)

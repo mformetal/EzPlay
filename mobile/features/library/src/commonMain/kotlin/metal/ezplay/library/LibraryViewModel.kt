@@ -7,6 +7,7 @@ import app.cash.paging.map
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import metal.ezplay.multiplatform.dto.SongDto
@@ -21,7 +22,7 @@ class LibraryViewModel(
     val songs: Flow<PagingData<SongDto>> = pager.flow
 
     init {
-        viewModelScope.launch {
+        scope.launch {
             pager.flow
                 .map { pagingData ->
                     pagingData.map { song ->

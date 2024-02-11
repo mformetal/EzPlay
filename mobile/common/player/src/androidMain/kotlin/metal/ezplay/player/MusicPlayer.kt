@@ -1,6 +1,7 @@
 package metal.ezplay.player
 
 import android.content.Context
+import android.provider.Settings.Global
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.Player.State
@@ -8,33 +9,56 @@ import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import metal.ezplay.logging.SystemOut
+import metal.ezplay.multiplatform.dto.SongDto
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.scope.Scope
 import java.io.File
 
-actual class MusicPlayer(private val exoPlayer: ExoPlayer,
-    private val mainDispatcher: CoroutineDispatcher) {
+actual class MusicPlayer(
+    private val exoPlayer: ExoPlayer,
+    private val scope: CoroutineScope,
+    private val mainDispatcher: CoroutineDispatcher,
+    private val backgroundDispatcher: CoroutineDispatcher) {
 
     private val listenerFlow = MutableSharedFlow<MusicPlayerState>()
+    private var songDurationJob: Job?= null
+
+    actual val playerState: Flow<MusicPlayerState> = listenerFlow
+
+    private var currentSong: SongDto? = null
 
     init {
         exoPlayer.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
-                GlobalScope.launch(mainDispatcher) {
-                    if (exoPlayer.playWhenReady && playbackState == Player.STATE_READY) {
-                        listenerFlow.emit(MusicPlayerState.Playing)
-                    } else if (exoPlayer.playWhenReady) {
-                        listenerFlow.emit(MusicPlayerState.Paused)
-                    } else {
-                        // player paused in any state
-                        listenerFlow.emit(MusicPlayerState.Idle)
-                    }
+                if (exoPlayer.playWhenReady && playbackState == Player.STATE_READY) {
+                    songDurationJob?.cancel()
+                    songDurationJob = songPlayingJob()
+                } else if (exoPlayer.playWhenReady) {
+                    emitState(MusicPlayerState.Paused)
+                } else {
+                    emitState(MusicPlayerState.Idle)
+                }
+            }
+
+            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                if (playWhenReady) {
+                    songDurationJob?.cancel()
+                    songDurationJob = songPlayingJob()
+                } else {
+                    songDurationJob?.cancel()
+                    emitState(MusicPlayerState.Paused)
                 }
             }
         })
@@ -47,7 +71,9 @@ actual class MusicPlayer(private val exoPlayer: ExoPlayer,
         exoPlayer.play()
     }
 
-    actual fun play(uri: String) {
+    actual fun play(songDto: SongDto, uri: String) {
+        currentSong = songDto
+
         with (exoPlayer) {
             val mediaItem = MediaItem.Builder()
                 .setUri(uri)
@@ -66,7 +92,24 @@ actual class MusicPlayer(private val exoPlayer: ExoPlayer,
         exoPlayer.stop()
     }
 
-    actual suspend fun playerState(): Flow<MusicPlayerState> = listenerFlow
+    private fun emitState(state: MusicPlayerState) {
+        scope.launch {
+            listenerFlow.emit(state)
+        }
+    }
+
+    private fun songPlayingJob(): Job {
+        return scope.launch(mainDispatcher) {
+            while (exoPlayer.currentPosition <= exoPlayer.duration) {
+                emitState(MusicPlayerState.Playing(
+                    songDto = requireNotNull(currentSong),
+                    elapsed = exoPlayer.currentPosition,
+                    total = exoPlayer.duration
+                ))
+                delay(100L)
+            }
+        }
+    }
 }
 
 actual fun Scope.createMusicPlayer(): MusicPlayer {
@@ -82,5 +125,5 @@ actual fun Scope.createMusicPlayer(): MusicPlayer {
             playWhenReady = false
         }
 
-    return MusicPlayer(exoPlayer, Dispatchers.Main)
+    return MusicPlayer(exoPlayer, CoroutineScope(Dispatchers.IO), Dispatchers.Main, Dispatchers.IO)
 }

@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import metal.ezplay.multiplatform.dto.SongDto
 
 class PlayerQueue(
     private val scope: CoroutineScope,
@@ -13,12 +14,12 @@ class PlayerQueue(
     private val downloader: SongDownloader
 ) {
 
-    fun now(songId: Int) {
+    fun now(song: SongDto) {
         scope.launch(backgroundDispatcher) {
-            val path = downloader.download(songId)
+            val path = downloader.download(song.id)
 
             withContext(mainDispatcher) {
-                player.play(path.toString())
+                player.play(song, path.toString())
             }
         }
     }

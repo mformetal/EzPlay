@@ -15,7 +15,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.multiplatform.dto)
-            implementation(projects.mobile.common.entities)
             implementation(projects.mobile.common.network)
 
             implementation(libs.common.coroutines)
