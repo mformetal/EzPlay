@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.paging.LoadState
 import app.cash.paging.compose.collectAsLazyPagingItems
 import metal.ezplay.android.compose.extra_small_padding
@@ -51,8 +52,14 @@ fun ColumnScope.LibraryScreen(modifier: Modifier, viewModel: LibraryViewModel, n
                             nowPlayingViewModel.play(song)
                         }) {
                         Column(verticalArrangement = Arrangement.spacedBy(extra_small_padding)) {
-                            Text(text = song.name, style = MaterialTheme.typography.bodyLarge)
-                            Text(text = song.artist.name, style = MaterialTheme.typography.bodySmall)
+                            Text(text = song.name,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodyLarge)
+                            Text(text = song.artist.name,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodySmall)
                         }
                     }
                     Divider()
