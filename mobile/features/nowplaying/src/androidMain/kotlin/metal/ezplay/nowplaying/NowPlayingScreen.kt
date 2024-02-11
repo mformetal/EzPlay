@@ -49,9 +49,7 @@ fun ColumnScope.NowPlayingScreen(modifier: Modifier, nowPlayingViewModel: NowPla
     val state by nowPlayingViewModel.uiState.collectAsState()
 
     Box(modifier = modifier
-        .background(
-            MaterialTheme.colorScheme.primaryContainer
-        )
+        .background(MaterialTheme.colorScheme.primaryContainer)
         .zIndex(2f)) {
         LinearProgressIndicator(
             progress = state.progress,

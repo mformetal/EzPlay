@@ -35,9 +35,9 @@ fun ColumnScope.LibraryScreen(modifier: Modifier, viewModel: LibraryViewModel, n
             }
             LoadState.Loading -> {
                 item {
-                    Column {
+                    Row {
                         CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier.align(Alignment.CenterVertically)
                         )
                     }
                 }
