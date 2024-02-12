@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import metal.ezplay.logging.SystemOut
 import metal.ezplay.multiplatform.dto.SongDto
+import metal.ezplay.network.Routes
 import metal.ezplay.storage.Song
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.scope.Scope
@@ -74,7 +75,8 @@ actual class MusicPlayer(
     actual fun play(songDto: SongDto, uri: String) {
         with (exoPlayer) {
             val mediaItem = MediaItem.Builder()
-                .setUri(uri)
+//                .setUri(uri)
+                .setUri(Routes.Songs.play(songDto.id))
                 .setTag(songDto)
                 .setMediaId(songDto.id.toString())
                 .setMediaMetadata(MediaMetadata.Builder()

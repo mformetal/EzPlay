@@ -118,7 +118,7 @@ class PlayerQueue(
 
     private suspend fun playFromQueue(index: Int) {
         val next = queue[index]
-        val song = client.get(Routes.song(next.id)).body<SongDto>()
+        val song = client.get(Routes.Songs.info(next.id)).body<SongDto>()
         downloadAndPlay(song)
     }
 

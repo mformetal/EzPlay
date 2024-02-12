@@ -23,7 +23,7 @@ class SongPagingSource(
 
   override suspend fun load(params: PagingSourceLoadParams<Int>): PagingSourceLoadResult<Int, SongDto> {
     val page = params.key ?: 1
-    val httpResponse = client.post(Routes.LIBRARY) {
+    val httpResponse = client.post(Routes.Songs.page()) {
       setBody(PagedSongListRequest(page))
     }
 

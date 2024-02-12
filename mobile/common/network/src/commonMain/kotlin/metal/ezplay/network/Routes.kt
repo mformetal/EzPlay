@@ -1,18 +1,22 @@
 package metal.ezplay.network
 
-import metal.ezplay.multiplatform.dto.SongId
-
 object Routes {
 
     private const val BASE_URL = "http://10.0.2.2:8080/"
 
-    val LIBRARY = BASE_URL.plus("library")
+    object Songs {
+        private val SONGS = BASE_URL.plus("songs")
 
-    fun preview(songId: Int) = LIBRARY.plus("/preview/$songId")
+        fun page() = SONGS
 
-    fun download(songId: Int) = LIBRARY.plus("/download/$songId")
+        fun preview(songId: Int) = SONGS.plus("/preview/$songId")
 
-    fun ids() = LIBRARY.plus("/ids")
+        fun downloadSong(songId: Int) = SONGS.plus("/download/$songId")
 
-    fun song(songId: Int) = LIBRARY.plus("/songs/$songId")
+        fun ids() = SONGS.plus("/ids")
+
+        fun info(songId: Int) = SONGS.plus("/songs/$songId")
+
+        fun play(songId: Int) = SONGS.plus("/play/$songId")
+    }
 }

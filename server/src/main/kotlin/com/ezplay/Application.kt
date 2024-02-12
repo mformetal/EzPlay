@@ -66,7 +66,7 @@ private fun Application.configureRouting() {
             call.respond(FreeMarkerContent("index.ftl", null))
         }
 
-        route("library") {
+        route("songs") {
             post {
                 val pageSize = 100L
                 val request = call.receive<PagedSongListRequest>()
@@ -130,7 +130,7 @@ private fun Application.configureRouting() {
                 ))
             }
 
-            get("songs/{id}") {
+            get("{id}") {
                 val song = DatabaseSingleton.query {
                     SongEntity.find {
                         Songs.id eq call.parameters["id"]!!.toInt()
