@@ -41,20 +41,6 @@ class LibraryViewModel(
         }
     }
 
-    fun shuffle() {
-        player.stop()
-
-        viewModelScope.launch {
-            try {
-                val response = client.get(Routes.Songs.ids())
-                val ids = response.body<List<SongId>>()
-                queue.shuffle(ids)
-            } catch (e: Exception) {
-
-            }
-        }
-    }
-
     private suspend fun updateDatabase(song: SongDto) {
         withContext(Dispatchers.IO) {
             appDatabase.artistQueries.transaction {

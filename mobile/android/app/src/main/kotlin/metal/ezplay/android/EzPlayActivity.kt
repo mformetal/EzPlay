@@ -1,12 +1,16 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package metal.ezplay.android
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -49,6 +53,7 @@ class EzPlayActivity : ComponentActivity() {
                 val client = get<HttpClient>()
 
                 val nowPlayingViewModel = NowPlayingViewModel(
+                    client,
                     player,
                     queue,
                 )
@@ -61,31 +66,32 @@ class EzPlayActivity : ComponentActivity() {
                 val searchViewModel = SearchViewModel(client, queue)
 
                 AppTheme {
+                    val scaffoldSheetState = rememberBottomSheetScaffoldState()
+
                     Scaffold(
                         bottomBar = {
                             BottomBar(navController, listOf(Screen.Library, Screen.Search))
-                        }
-                    ) { innerPadding: PaddingValues ->
-                        NavHost(navController, startDestination = Screen.Library.route, Modifier.padding(innerPadding)) {
-                            composable(Screen.Library.route) {
-                                Column {
-                                    val libraryModifier = Modifier.weight(.9f)
-                                    val nowPlayingModifier = Modifier.weight(.1f)
-                                    LibraryScreen(libraryModifier, libraryViewModel, nowPlayingViewModel)
-                                    NowPlayingScreen(nowPlayingModifier, nowPlayingViewModel)
-                                }
-                            }
+                        },
+                        content = { bottomBarPadding: PaddingValues ->
+                            BottomSheetScaffold(
+                                scaffoldState = scaffoldSheetState,
+                                modifier = Modifier.padding(bottomBarPadding),
+                                sheetContent = {
+                                    NowPlayingScreen(nowPlayingViewModel)
+                                },
+                            ) { bottomSheetPadding ->
+                                NavHost(navController, startDestination = Screen.Library.route, Modifier.padding(bottomSheetPadding)) {
+                                    composable(Screen.Library.route) {
+                                        LibraryScreen(libraryViewModel, nowPlayingViewModel)
+                                    }
 
-                            composable(Screen.Search.route) {
-                                Column {
-                                    val searchModifier = Modifier.weight(.9f)
-                                    val nowPlayingModifier = Modifier.weight(.1f)
-                                    SearchScreen(searchModifier, searchViewModel)
-                                    NowPlayingScreen(nowPlayingModifier, nowPlayingViewModel)
+                                    composable(Screen.Search.route) {
+                                        SearchScreen(searchViewModel)
+                                    }
                                 }
                             }
                         }
-                    }
+                    )
                 }
             }
         }

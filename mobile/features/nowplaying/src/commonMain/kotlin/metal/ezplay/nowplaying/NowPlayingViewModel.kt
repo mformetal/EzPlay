@@ -1,19 +1,25 @@
 package metal.ezplay.nowplaying
 
 import androidx.lifecycle.viewModelScope
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import metal.ezplay.multiplatform.dto.SongDto
+import metal.ezplay.multiplatform.dto.SongId
+import metal.ezplay.network.Routes
 import metal.ezplay.player.MusicPlayer
 import metal.ezplay.player.MusicPlayerState
 import metal.ezplay.player.PlayerQueue
 import metal.ezplay.viewmodel.MultiplatformViewModel
 
 class NowPlayingViewModel(
-    private val musicPlayer: MusicPlayer,
+    private val client: HttpClient,
+    private val player: MusicPlayer,
     private val queue: PlayerQueue
 ) : MultiplatformViewModel() {
 
@@ -25,10 +31,10 @@ class NowPlayingViewModel(
     }
 
     fun musicControlsClicked() {
-        if (musicPlayer.isPlaying) {
-            pause()
-        } else {
-            play()
+        when {
+            player.currentSong == null -> shuffle()
+            player.isPlaying -> pause()
+            else -> play()
         }
     }
 
@@ -45,16 +51,30 @@ class NowPlayingViewModel(
     }
 
     private fun pause() {
-        musicPlayer.pause()
+        player.pause()
     }
 
     private fun play() {
-        musicPlayer.play()
+        player.play()
+    }
+
+    private fun shuffle() {
+        player.stop()
+
+        viewModelScope.launch {
+            try {
+                val response = client.get(Routes.Songs.ids())
+                val ids = response.body<List<SongId>>()
+                queue.shuffle(ids)
+            } catch (e: Exception) {
+
+            }
+        }
     }
 
     private fun listenToPlayerState() {
         viewModelScope.launch {
-            musicPlayer.playerState
+            player.playerState
                 .collect { playerState ->
                     when (playerState) {
                         MusicPlayerState.Finished -> { }
