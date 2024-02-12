@@ -53,8 +53,9 @@ class SongDownloader(
         val chunkSize = max(DEFAULT_BUFFER_SIZE.toLong(), preview.fileSize.div(10))
         var downloaded = 0L
         val sink = fileSystem.sink(audioFilePath).buffered()
+        var hasFileDownloadError = false
 
-        while (downloaded < preview.fileSize && fileSystem.exists(audioFilePath)) {
+        while (downloaded < preview.fileSize && !hasFileDownloadError) {
             retry {
                 client.get(Routes.Songs.downloadSong(songId)) {
                     header("Range", "bytes=${downloaded}-${downloaded + chunkSize}")
@@ -65,6 +66,8 @@ class SongDownloader(
                 downloaded += chunkSize
             }, onFailure = { downloadException ->
                 SystemOut.exception(downloadException)
+
+                hasFileDownloadError = true
 
                 fileSystem.delete(audioFilePath)
             })

@@ -3,23 +3,21 @@ package metal.ezplay.multiplatform.coroutines
 import kotlinx.coroutines.delay
 
 suspend fun <T> retry(
-    times: Int = Int.MAX_VALUE,
-    initialDelay: Long = 100, // 0.1 second
-    maxDelay: Long = 1000,    // 1 second
+    times: Int = 5,
     factor: Double = 2.0,
     block: suspend () -> T): Result<T>
 {
-    var currentDelay = initialDelay
-    repeat(times - 1) {
-        runCatching {
-            try {
-                return runCatching { block() }
-            } catch (e: Exception) {
-
-            }
+    var currentDelay = 0L
+    repeat(times - 1) { retryCount ->
+        val result = runCatching {
+            block()
         }
+        if (result.isSuccess) {
+            return result
+        }
+
         delay(currentDelay)
-        currentDelay = (currentDelay * factor).toLong().coerceAtMost(maxDelay)
+        currentDelay = (retryCount * factor).toLong()
     }
     return runCatching { block() }
 }

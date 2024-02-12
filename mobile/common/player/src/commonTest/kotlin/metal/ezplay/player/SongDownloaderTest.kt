@@ -12,7 +12,14 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.yield
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.encodeToString
@@ -25,6 +32,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class SongDownloaderTest {
+
+    private val testDispatcher = StandardTestDispatcher()
 
     private val files = mutableListOf<Path>()
     private lateinit var fileDirectory: Path
@@ -48,17 +57,17 @@ class SongDownloaderTest {
     }
 
     @Test
-    fun `should download audio file into path`() = runTest {
+    fun `should download audio file into path`() = runTest(testDispatcher) {
         val songId = 0
         val fileSize = 100L
         val fileName = "test.mp3"
         createDownloader { request ->
-            val requestType = request.url.pathSegments.get(request.url.pathSegments.lastIndex - 1)
+            val requestType = request.url.pathSegments[request.url.pathSegments.lastIndex - 1]
             if (requestType == "preview") {
                 respondWithPreview(
                     PreviewDto(
                         fileSize = fileSize,
-                        fileName = "test.mp3"
+                        fileName = fileName
                     )
                 )
             } else {
@@ -73,10 +82,17 @@ class SongDownloaderTest {
         }
 
         val audioFile = downloader.download(songId).also(files::add)
+        yield()
+        advanceUntilIdle()
+        advanceTimeBy(10000L)
+        runCurrent()
+//        testDispatcher.scheduler.advanceUntilIdle()
+//        testDispatcher.scheduler.advanceTimeBy(100000L)
+//        delay(10000)
 
         val metadata = assertNotNull(SystemFileSystem.metadataOrNull(audioFile))
-        assertEquals(metadata.size, fileSize)
         assertEquals(audioFile.name, fileName)
+        assertEquals(metadata.size, fileSize)
     }
 
     private fun MockRequestHandleScope.respondWithPreview(dto: PreviewDto) =
@@ -92,10 +108,12 @@ class SongDownloaderTest {
             headers = headersOf(HttpHeaders.ContentType, "application/json")
         )
 
-    private fun createDownloader(handler: suspend MockRequestHandleScope.(HttpRequestData) -> HttpResponseData) {
+    private fun TestScope.createDownloader(handler: suspend MockRequestHandleScope.(HttpRequestData) -> HttpResponseData) {
         engine = MockEngine(handler)
 
         downloader = SongDownloader(
+            scope = this,
+            backgroundDispatcher = testDispatcher,
             client = HttpClient(engine) {
                 install(ContentNegotiation) {
                     json()

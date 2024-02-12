@@ -7,6 +7,11 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.common.coroutines)
         }
+
+        commonTest.dependencies {
+            implementation(libs.testing)
+            implementation(libs.testing.coroutines)
+        }
     }
 }
 
