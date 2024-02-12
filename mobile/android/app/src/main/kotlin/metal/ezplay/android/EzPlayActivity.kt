@@ -63,11 +63,11 @@ class EzPlayActivity : ComponentActivity() {
                 AppTheme {
                     Scaffold(
                         bottomBar = {
-                            BottomBar(navController)
+                            BottomBar(navController, listOf(Screen.Library, Screen.Search))
                         }
                     ) { innerPadding: PaddingValues ->
-                        NavHost(navController, startDestination = "library", Modifier.padding(innerPadding)) {
-                            composable("library") {
+                        NavHost(navController, startDestination = Screen.Library.route, Modifier.padding(innerPadding)) {
+                            composable(Screen.Library.route) {
                                 Column {
                                     val libraryModifier = Modifier.weight(.9f)
                                     val nowPlayingModifier = Modifier.weight(.1f)
@@ -76,7 +76,7 @@ class EzPlayActivity : ComponentActivity() {
                                 }
                             }
 
-                            composable("search") {
+                            composable(Screen.Search.route) {
                                 Column {
                                     val searchModifier = Modifier.weight(.9f)
                                     val nowPlayingModifier = Modifier.weight(.1f)
