@@ -26,9 +26,9 @@ class NowPlayingViewModel(
 
     fun musicControlsClicked() {
         if (musicPlayer.isPlaying) {
-            play()
-        } else {
             pause()
+        } else {
+            play()
         }
     }
 
