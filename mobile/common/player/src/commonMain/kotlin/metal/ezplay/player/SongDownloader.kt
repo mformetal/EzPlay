@@ -12,12 +12,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.io.Sink
 import kotlinx.io.buffered
 import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
+import metal.ezplay.logging.SystemOut
+import metal.ezplay.multiplatform.coroutines.retry
 import metal.ezplay.multiplatform.dto.PreviewDto
 import metal.ezplay.network.Routes
 import org.koin.android.ext.koin.androidContext
@@ -37,7 +40,7 @@ class SongDownloader(
         if (fileSystem.exists(audioFile)) return audioFile
 
         scope.launch(backgroundDispatcher) {
-            downloadFile(fileSystem.sink(audioFile).buffered(), songId)
+            downloadFile(audioFile, songId)
         }
 
         return audioFile
@@ -45,18 +48,26 @@ class SongDownloader(
 
     private fun audioFilePath(name: String): Path = Path(internalFileStorage, name)
 
-    private suspend fun downloadFile(sink: Sink, songId: Int) {
+    private suspend fun downloadFile(audioFilePath: Path, songId: Int) {
         val preview = client.get(Routes.Songs.preview(songId)).body<PreviewDto>()
         val chunkSize = max(DEFAULT_BUFFER_SIZE.toLong(), preview.fileSize.div(10))
         var downloaded = 0L
+        val sink = fileSystem.sink(audioFilePath).buffered()
 
-        while (downloaded < preview.fileSize) {
-            val chunk = client.get(Routes.Songs.downloadSong(songId)) {
-                header("Range", "bytes=${downloaded}-${downloaded + chunkSize}")
-            }
-            writeTo(sink, chunk)
+        while (downloaded < preview.fileSize && fileSystem.exists(audioFilePath)) {
+            retry {
+                client.get(Routes.Songs.downloadSong(songId)) {
+                    header("Range", "bytes=${downloaded}-${downloaded + chunkSize}")
+                }
+            }.fold(onSuccess = { chunk ->
+                writeTo(sink, chunk)
 
-            downloaded += chunkSize
+                downloaded += chunkSize
+            }, onFailure = { downloadException ->
+                SystemOut.exception(downloadException)
+
+                fileSystem.delete(audioFilePath)
+            })
         }
     }
 

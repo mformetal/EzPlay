@@ -9,4 +9,8 @@ actual object SystemOut {
     actual fun debug(message: String?) {
         Log.d(TAG, message ?: "Original message was null.")
     }
+
+    actual fun exception(throwable: Throwable) {
+        Log.e(TAG, null, throwable)
+    }
 }

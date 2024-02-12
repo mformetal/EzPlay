@@ -15,7 +15,7 @@ object Routes {
 
         fun ids() = SONGS.plus("/ids")
 
-        fun info(songId: Int) = SONGS.plus("/songs/$songId")
+        fun info(songId: Int) = SONGS.plus("/$songId")
 
         fun play(songId: Int) = SONGS.plus("/play/$songId")
     }

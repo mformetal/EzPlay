@@ -5,6 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.multiplatform.coroutines)
             implementation(projects.multiplatform.dto)
             implementation(projects.multiplatform.extensions)
             implementation(projects.mobile.common.logging)
