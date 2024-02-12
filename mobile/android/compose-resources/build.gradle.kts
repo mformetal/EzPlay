@@ -10,4 +10,5 @@ dependencies {
     implementation(libs.android.compose.runtime)
     implementation(libs.android.compose.material3)
     implementation(libs.android.compose.material)
+    implementation(libs.android.core)
 }

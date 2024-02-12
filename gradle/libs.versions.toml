@@ -43,6 +43,7 @@ android-compose-material-icons = { module = "androidx.compose.material:material-
 android-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.7.6" }
 android-compose-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "compose" }
 android-compose-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
+android-core = { module = "androidx.core:core", version = "1.12.0" }
 android-ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 android-ktor-contentnegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 android-paging = { module = "app.cash.paging:paging-compose-common", version.ref = "paging" }
