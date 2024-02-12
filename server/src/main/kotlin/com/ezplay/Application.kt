@@ -79,19 +79,7 @@ private fun Application.configureRouting() {
                     SongEntity.all()
                         .orderBy(Songs.name to SortOrder.DESC)
                         .limit(n = pageSize.toInt(), offset = offset)
-                        .map {
-                            SongDto(
-                                id = it.id.value,
-                                name = it.name,
-                                album = AlbumDto(id = it.album.id.value,
-                                    name = it.album.name),
-                                imageUrl = "",
-                                artist = ArtistDto(
-                                    id = it.artist.id.value,
-                                    name = it.artist.name
-                                )
-                            )
-                        }
+                        .map(SongEntity::toDto)
                 }
 
                 val lastPage = numSongs.div(pageSize)
@@ -125,7 +113,7 @@ private fun Application.configureRouting() {
                         }
                 }
 
-                call.respond(songs)
+                call.respond(songs.shuffled())
             }
 
             get("preview/{id}") {
@@ -158,6 +146,16 @@ private fun Application.configureRouting() {
 //                } else {
 //                   call.respondBytes(imageData, ContentType.Image.JPEG, HttpStatusCode.OK)
 //                }
+            }
+
+            get("songs/{id}") {
+                val song = DatabaseSingleton.query {
+                    SongEntity.find {
+                        Songs.id eq call.parameters["id"]!!.toInt()
+                    }.first().toDto()
+                }
+
+                call.respond(song)
             }
 
             get("download/{id}") {

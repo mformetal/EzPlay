@@ -1,6 +1,8 @@
 package com.ezplay.db.tables
 
 import kotlinx.io.files.Path
+import metal.ezplay.multiplatform.dto.AlbumDto
+import metal.ezplay.multiplatform.dto.ArtistDto
 import metal.ezplay.multiplatform.dto.SongDto
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -29,4 +31,16 @@ class SongEntity(id: EntityID<Int>) : IntEntity(id) {
 
     val filePath: Path
         get() = Path(localPath)
+
+    fun toDto() = SongDto(
+        id = id.value,
+        name = name,
+        album = AlbumDto(id = album.id.value,
+            name = album.name),
+        imageUrl = "",
+        artist = ArtistDto(
+            id = artist.id.value,
+            name = artist.name
+        )
+    )
 }

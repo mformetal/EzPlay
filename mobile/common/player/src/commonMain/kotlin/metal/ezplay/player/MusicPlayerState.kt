@@ -10,5 +10,5 @@ sealed class MusicPlayerState {
 
     object Loading : MusicPlayerState()
 
-    object Idle : MusicPlayerState()
+    object Finished : MusicPlayerState()
 }

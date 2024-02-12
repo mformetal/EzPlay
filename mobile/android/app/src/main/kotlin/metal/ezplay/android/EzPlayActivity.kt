@@ -5,11 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import io.ktor.client.HttpClient
-import kotlinx.coroutines.Dispatchers
 import metal.ezplay.android.compose.AppTheme
 import metal.ezplay.library.LibraryScreen
 import metal.ezplay.library.LibraryViewModel
@@ -24,9 +22,6 @@ import metal.ezplay.storage.AppDatabase
 import metal.ezplay.storage.databaseModule
 import org.koin.android.ext.android.get
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.compose.koinViewModel
-import org.koin.androidx.compose.viewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.KoinApplication
 
 class EzPlayActivity : ComponentActivity() {
@@ -53,7 +48,7 @@ class EzPlayActivity : ComponentActivity() {
                 val pager = Pager(pagingConfig) {
                     SongPagingSource(client)
                 }
-                val libraryViewModel = LibraryViewModel(database, pager)
+                val libraryViewModel = LibraryViewModel(database, client, queue, pager)
 
                 AppTheme {
                     Column {

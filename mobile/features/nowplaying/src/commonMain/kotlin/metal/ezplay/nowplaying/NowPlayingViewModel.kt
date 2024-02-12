@@ -1,19 +1,15 @@
 package metal.ezplay.nowplaying
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import metal.ezplay.logging.SystemOut
 import metal.ezplay.multiplatform.dto.SongDto
 import metal.ezplay.player.MusicPlayer
 import metal.ezplay.player.MusicPlayerState
 import metal.ezplay.player.PlayerQueue
-import metal.ezplay.storage.AppDatabase
 import metal.ezplay.viewmodel.MultiplatformViewModel
 
 class NowPlayingViewModel(
@@ -30,9 +26,9 @@ class NowPlayingViewModel(
 
     fun musicControlsClicked() {
         if (musicPlayer.isPlaying) {
-            pause()
-        } else {
             play()
+        } else {
+            pause()
         }
     }
 
@@ -55,7 +51,7 @@ class NowPlayingViewModel(
             musicPlayer.playerState
                 .collect { playerState ->
                     when (playerState) {
-                        MusicPlayerState.Idle -> { }
+                        MusicPlayerState.Finished -> { }
                         MusicPlayerState.Loading -> { }
                         MusicPlayerState.Paused -> {
                             _uiState.update {

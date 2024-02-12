@@ -7,6 +7,8 @@ expect class MusicPlayer {
 
     val isPlaying: Boolean
 
+    var currentSong: SongDto?
+
     val playerState: Flow<MusicPlayerState>
 
     fun play()

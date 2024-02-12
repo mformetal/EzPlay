@@ -1,30 +1,21 @@
 package metal.ezplay.player
 
-import android.content.Context
-import android.provider.Settings.Global
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.Player.State
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import metal.ezplay.logging.SystemOut
 import metal.ezplay.multiplatform.dto.SongDto
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.scope.Scope
-import java.io.File
 
 actual class MusicPlayer(
     private val exoPlayer: ExoPlayer,
@@ -37,18 +28,20 @@ actual class MusicPlayer(
 
     actual val playerState: Flow<MusicPlayerState> = listenerFlow
 
-    private var currentSong: SongDto? = null
+    actual var currentSong: SongDto? = null
 
     init {
         exoPlayer.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
-                if (exoPlayer.playWhenReady && playbackState == Player.STATE_READY) {
+                if (playbackState == Player.STATE_ENDED) {
+                    songDurationJob?.cancel()
+                    currentSong = null
+                    emitState(MusicPlayerState.Finished)
+                } else if (exoPlayer.playWhenReady && playbackState == Player.STATE_READY) {
                     songDurationJob?.cancel()
                     songDurationJob = songPlayingJob()
                 } else if (exoPlayer.playWhenReady) {
                     emitState(MusicPlayerState.Paused)
-                } else {
-                    emitState(MusicPlayerState.Idle)
                 }
             }
 

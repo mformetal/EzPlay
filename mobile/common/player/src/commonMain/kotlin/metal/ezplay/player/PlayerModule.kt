@@ -2,6 +2,7 @@
 
 package metal.ezplay.player
 
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import org.koin.core.scope.Scope
@@ -16,6 +17,7 @@ val playerModule = module {
             mainDispatcher = Dispatchers.Main,
             backgroundDispatcher = Dispatchers.IO,
             player = get<MusicPlayer>(),
+            client = get<HttpClient>(),
             downloader = get<SongDownloader>()
         )
     }
