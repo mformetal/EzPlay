@@ -36,7 +36,7 @@ dependencies {
     implementation(libs.kotlinx.serialization)
     implementation(libs.logback)
     implementation(libs.songMetadataReader)
-    implementation(libs.coroutines.jvm)
+    implementation(libs.jvm.coroutines)
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
     implementation(libs.exposed.jdbc)

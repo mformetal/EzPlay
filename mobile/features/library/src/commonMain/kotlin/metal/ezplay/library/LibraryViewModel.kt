@@ -46,7 +46,8 @@ class LibraryViewModel(
 
         viewModelScope.launch {
             try {
-                val ids = client.get(Routes.ids()).body<List<SongId>>()
+                val response = client.get(Routes.ids())
+                val ids = response.body<List<SongId>>()
                 queue.shuffle(ids)
             } catch (e: Exception) {
 

@@ -130,24 +130,6 @@ private fun Application.configureRouting() {
                 ))
             }
 
-            get("artwork/{id}") {
-                val song = DatabaseSingleton.query {
-                    SongEntity.find {
-                        Songs.id eq call.parameters["id"]!!.toInt()
-                    }.first()
-                }
-
-                val file = File(song.localPath)
-                val audioFile = AudioFileIO.read(file)
-                val artwork = audioFile.tag.firstArtwork
-                val imageData = artwork?.binaryData
-//                if (imageData == null) {
-//                    call.respond(HttpStatusCode.NotFound)
-//                } else {
-//                   call.respondBytes(imageData, ContentType.Image.JPEG, HttpStatusCode.OK)
-//                }
-            }
-
             get("songs/{id}") {
                 val song = DatabaseSingleton.query {
                     SongEntity.find {

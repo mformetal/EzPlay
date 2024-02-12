@@ -1,6 +1,8 @@
 package metal.ezplay.player
 
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Metadata
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
@@ -13,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import metal.ezplay.logging.SystemOut
 import metal.ezplay.multiplatform.dto.SongDto
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.scope.Scope
@@ -53,6 +56,14 @@ actual class MusicPlayer(
                     songDurationJob?.cancel()
                     emitState(MusicPlayerState.Paused)
                 }
+            }
+
+            override fun onMetadata(metadata: Metadata) {
+                SystemOut.debug("ON METADATA: ${metadata}")
+            }
+
+            override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+                SystemOut.debug("ON MEDIA METADATA: ${mediaMetadata.title}")
             }
         })
     }
