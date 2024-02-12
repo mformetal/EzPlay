@@ -15,6 +15,8 @@ expect class MusicPlayer {
 
     fun play(songDto: SongDto, uri: String)
 
+    fun restart()
+
     fun pause()
 
     fun stop()

@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import metal.ezplay.multiplatform.dto.SongDto
 import metal.ezplay.multiplatform.dto.SongId
 import metal.ezplay.network.Routes
+import metal.ezplay.player.MusicPlayer
 import metal.ezplay.player.PlayerQueue
 import metal.ezplay.storage.AppDatabase
 import metal.ezplay.viewmodel.MultiplatformViewModel
@@ -23,6 +24,7 @@ class LibraryViewModel(
     private val appDatabase: AppDatabase,
     private val client: HttpClient,
     private val queue: PlayerQueue,
+    private val player: MusicPlayer,
     private val pager: Pager<Int, SongDto>
 ) : MultiplatformViewModel() {
 
@@ -40,6 +42,8 @@ class LibraryViewModel(
     }
 
     fun shuffle() {
+        player.stop()
+
         viewModelScope.launch {
             try {
                 val ids = client.get(Routes.ids()).body<List<SongId>>()

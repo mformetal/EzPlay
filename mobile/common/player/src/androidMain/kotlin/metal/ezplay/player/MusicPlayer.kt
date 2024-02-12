@@ -23,7 +23,7 @@ actual class MusicPlayer(
     private val mainDispatcher: CoroutineDispatcher,
     private val backgroundDispatcher: CoroutineDispatcher) {
 
-    private val listenerFlow = MutableSharedFlow<MusicPlayerState>()
+    private val listenerFlow = MutableSharedFlow<MusicPlayerState>(replay = 1)
     private var songDurationJob: Job?= null
 
     actual val playerState: Flow<MusicPlayerState> = listenerFlow
@@ -75,6 +75,11 @@ actual class MusicPlayer(
             prepare()
             playWhenReady = true
         }
+    }
+
+    actual fun restart() {
+        exoPlayer.seekTo(0L)
+        exoPlayer.playWhenReady = true
     }
 
     actual fun pause() {

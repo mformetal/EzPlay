@@ -48,7 +48,7 @@ class EzPlayActivity : ComponentActivity() {
                 val pager = Pager(pagingConfig) {
                     SongPagingSource(client)
                 }
-                val libraryViewModel = LibraryViewModel(database, client, queue, pager)
+                val libraryViewModel = LibraryViewModel(database, client, queue, player, pager)
 
                 AppTheme {
                     Column {
