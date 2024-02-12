@@ -29,7 +29,7 @@ import metal.ezplay.android.compose.small_padding
 import metal.ezplay.nowplaying.NowPlayingViewModel
 
 @Composable
-fun LibraryScreen(viewModel: LibraryViewModel, nowPlayingViewModel: NowPlayingViewModel) {
+fun LibraryScreen(viewModel: LibraryViewModel) {
     val songs = viewModel.songs.collectAsLazyPagingItems()
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -55,7 +55,7 @@ fun LibraryScreen(viewModel: LibraryViewModel, nowPlayingViewModel: NowPlayingVi
                         Row(modifier = Modifier.fillMaxWidth()
                             .padding(small_padding)
                             .clickable {
-                                nowPlayingViewModel.play(song)
+                                viewModel.play(song)
                             }) {
                             Column(verticalArrangement = Arrangement.spacedBy(extra_small_padding)) {
                                 Text(text = song.name,

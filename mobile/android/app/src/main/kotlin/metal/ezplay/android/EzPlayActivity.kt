@@ -61,7 +61,7 @@ class EzPlayActivity : ComponentActivity() {
                 val libraryPager = Pager(PagingConfig(pageSize = 100, initialLoadSize = 100)) {
                     SongPagingSource(client)
                 }
-                val libraryViewModel = LibraryViewModel(database, client, queue, player, libraryPager)
+                val libraryViewModel = LibraryViewModel(database, queue, libraryPager)
 
                 val searchViewModel = SearchViewModel(client, queue)
 
@@ -82,7 +82,7 @@ class EzPlayActivity : ComponentActivity() {
                             ) { bottomSheetPadding ->
                                 NavHost(navController, startDestination = Screen.Library.route, Modifier.padding(bottomSheetPadding)) {
                                     composable(Screen.Library.route) {
-                                        LibraryScreen(libraryViewModel, nowPlayingViewModel)
+                                        LibraryScreen(libraryViewModel)
                                     }
 
                                     composable(Screen.Search.route) {
