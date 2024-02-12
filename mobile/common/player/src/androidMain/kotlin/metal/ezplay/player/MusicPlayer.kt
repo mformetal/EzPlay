@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import metal.ezplay.logging.SystemOut
 import metal.ezplay.multiplatform.dto.SongDto
+import metal.ezplay.storage.Song
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.scope.Scope
 
@@ -38,7 +39,6 @@ actual class MusicPlayer(
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState == Player.STATE_ENDED) {
                     songDurationJob?.cancel()
-                    currentSong = null
                     emitState(MusicPlayerState.Finished)
                 } else if (exoPlayer.playWhenReady && playbackState == Player.STATE_READY) {
                     songDurationJob?.cancel()
@@ -58,12 +58,8 @@ actual class MusicPlayer(
                 }
             }
 
-            override fun onMetadata(metadata: Metadata) {
-                SystemOut.debug("ON METADATA: ${metadata}")
-            }
-
-            override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-                SystemOut.debug("ON MEDIA METADATA: ${mediaMetadata.title}")
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                currentSong = mediaItem?.localConfiguration?.tag as? SongDto
             }
         })
     }
@@ -76,11 +72,17 @@ actual class MusicPlayer(
     }
 
     actual fun play(songDto: SongDto, uri: String) {
-        currentSong = songDto
-
         with (exoPlayer) {
             val mediaItem = MediaItem.Builder()
                 .setUri(uri)
+                .setTag(songDto)
+                .setMediaId(songDto.id.toString())
+                .setMediaMetadata(MediaMetadata.Builder()
+                    .setTitle(songDto.name)
+                    .setAlbumTitle(songDto.album.name)
+                    .setAlbumArtist(songDto.artist.name)
+                    .setArtist(songDto.artist.name)
+                    .build())
                 .build()
             setMediaItem(mediaItem)
             prepare()
