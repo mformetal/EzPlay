@@ -76,7 +76,7 @@ fun ColumnScope.NowPlayingScreen(modifier: Modifier, nowPlayingViewModel: NowPla
             }
 
             IconButton(onClick = {
-
+                nowPlayingViewModel.previous()
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -98,7 +98,7 @@ fun ColumnScope.NowPlayingScreen(modifier: Modifier, nowPlayingViewModel: NowPla
             }
 
             IconButton(onClick = {
-
+                nowPlayingViewModel.next()
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,

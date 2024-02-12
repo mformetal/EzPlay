@@ -38,6 +38,14 @@ class NowPlayingViewModel(
         queue.now(song)
     }
 
+    fun next() {
+        queue.next()
+    }
+
+    fun previous() {
+        queue.previous()
+    }
+
     private fun pause() {
         musicPlayer.pause()
     }
