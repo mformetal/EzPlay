@@ -84,4 +84,5 @@ dependencies {
     implementation(projects.mobile.common.viewmodel)
     implementation(projects.mobile.features.library)
     implementation(projects.mobile.features.nowplaying)
+    implementation(projects.mobile.features.search)
 }

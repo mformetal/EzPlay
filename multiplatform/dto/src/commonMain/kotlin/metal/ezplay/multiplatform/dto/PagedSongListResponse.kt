@@ -7,5 +7,6 @@ class PagedSongListResponse(
     val previous: Int?,
     val next: Int?,
     val current: Int,
+    val searchTerm: String?,
     val songs: List<SongDto>
 )

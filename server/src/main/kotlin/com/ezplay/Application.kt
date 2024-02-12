@@ -76,10 +76,18 @@ private fun Application.configureRouting() {
                     SongEntity.count()
                 }
                 val songs = DatabaseSingleton.query {
-                    SongEntity.all()
-                        .orderBy(Songs.name to SortOrder.DESC)
-                        .limit(n = pageSize.toInt(), offset = offset)
-                        .map(SongEntity::toDto)
+                    val searchTerm = request.searchTerm
+                    if (searchTerm.isNullOrBlank()) {
+                        SongEntity.all()
+                            .orderBy(Songs.name to SortOrder.DESC)
+                            .limit(n = pageSize.toInt(), offset = offset)
+                    } else {
+                        SongEntity.find {
+                            Songs.name like "$searchTerm%"
+                        }
+                            .orderBy(Songs.name to SortOrder.DESC)
+                            .limit(n = pageSize.toInt(), offset = offset)
+                    }.map(SongEntity::toDto)
                 }
 
                 val lastPage = numSongs.div(pageSize)
@@ -100,7 +108,8 @@ private fun Application.configureRouting() {
                     previous = previousNumber,
                     next = nextPageNumber,
                     songs = songs,
-                    current = pageNumber
+                    current = pageNumber,
+                    searchTerm = request.searchTerm
                 ))
             }
 

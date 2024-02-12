@@ -1,3 +1,4 @@
 <resources>
-    <string name="home_tab_name">Home</string>
+    <string name="library_tab_nam">Library</string>
+    <string name="search_tab_name">Search</string>
 </resources>

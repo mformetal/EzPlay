@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class PagedSongListRequest(
-    val page: Int
+    val page: Int,
+    val searchTerm: String? = null
 )
