@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import metal.ezplay.android.compose.extra_small_padding
 import metal.ezplay.android.compose.small_padding
 import metal.ezplay.android.xml.R as XmlR
 
@@ -45,16 +46,14 @@ fun NowPlayingScreen(nowPlayingViewModel: NowPlayingViewModel) {
             verticalAlignment = Alignment.CenterVertically) {
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                verticalArrangement = Arrangement.spacedBy(extra_small_padding)) {
                 Text(text = state.songName,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-//                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     style = MaterialTheme.typography.bodyLarge)
                 Text(text = state.artistName,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-//                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     style = MaterialTheme.typography.bodySmall)
             }
 
