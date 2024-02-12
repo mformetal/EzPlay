@@ -58,7 +58,7 @@ class EzPlayActivity : ComponentActivity() {
                 }
                 val libraryViewModel = LibraryViewModel(database, client, queue, player, libraryPager)
 
-                val searchViewModel = SearchViewModel(client)
+                val searchViewModel = SearchViewModel(client, queue)
 
                 AppTheme {
                     Scaffold(

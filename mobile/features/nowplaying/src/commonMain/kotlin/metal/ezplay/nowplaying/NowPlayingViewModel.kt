@@ -33,8 +33,6 @@ class NowPlayingViewModel(
     }
 
     fun play(song: SongDto) {
-        musicPlayer.stop()
-
         queue.now(song)
     }
 

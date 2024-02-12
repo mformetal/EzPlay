@@ -88,6 +88,8 @@ class PlayerQueue(
         queueJob?.cancel()
         queue.clear()
 
+        player.stop()
+
         scope.launch(backgroundDispatcher) {
             downloadAndPlay(song)
         }

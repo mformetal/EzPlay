@@ -9,9 +9,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import metal.ezplay.multiplatform.dto.SongDto
+import metal.ezplay.player.PlayerQueue
 import metal.ezplay.viewmodel.MultiplatformViewModel
 
-class SearchViewModel(private val client: HttpClient): MultiplatformViewModel() {
+class SearchViewModel(private val client: HttpClient,
+    private val queue: PlayerQueue): MultiplatformViewModel() {
 
     var searchTerm = ""
         private set
@@ -23,5 +25,9 @@ class SearchViewModel(private val client: HttpClient): MultiplatformViewModel() 
 
     fun search(term: String) {
         searchTerm = term
+    }
+
+    fun play(song: SongDto) {
+        queue.now(song)
     }
 }

@@ -33,6 +33,7 @@ fun SearchScreen(modifier: Modifier, viewModel: SearchViewModel) {
     val songs = viewModel.searchResults.collectAsLazyPagingItems()
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             SearchField(viewModel) {
                 songs.refresh()
@@ -62,7 +63,7 @@ fun SearchScreen(modifier: Modifier, viewModel: SearchViewModel) {
                             Row(modifier = Modifier.fillMaxWidth()
                                 .padding(small_padding)
                                 .clickable {
-
+                                    viewModel.play(song)
                                 }) {
                                 Column(verticalArrangement = Arrangement.spacedBy(extra_small_padding)) {
                                     Text(text = song.name,
