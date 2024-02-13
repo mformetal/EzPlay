@@ -82,7 +82,7 @@ class EzPlayActivity : ComponentActivity() {
                             ) { bottomSheetPadding ->
                                 NavHost(navController, startDestination = Screen.Library.route, Modifier.padding(bottomSheetPadding)) {
                                     composable(Screen.Library.route) {
-                                        LibraryScreen(libraryViewModel)
+                                        LibraryScreen(libraryViewModel.songs, libraryViewModel::play)
                                     }
 
                                     composable(Screen.Search.route) {

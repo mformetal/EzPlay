@@ -22,15 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.zIndex
 import androidx.paging.LoadState
+import app.cash.paging.PagingData
 import app.cash.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.flow.Flow
 import metal.ezplay.android.compose.extra_small_padding
 import metal.ezplay.android.compose.medium_padding
 import metal.ezplay.android.compose.small_padding
+import metal.ezplay.multiplatform.dto.SongDto
 import metal.ezplay.nowplaying.NowPlayingViewModel
 
 @Composable
-fun LibraryScreen(viewModel: LibraryViewModel) {
-    val songs = viewModel.songs.collectAsLazyPagingItems()
+fun LibraryScreen(flow: Flow<PagingData<SongDto>>, onSongClicked : (SongDto) -> Unit) {
+    val songs = flow.collectAsLazyPagingItems()
 
     Box(modifier = Modifier.fillMaxWidth()) {
         LazyColumn(verticalArrangement = Arrangement.spacedBy(small_padding)) {
@@ -55,7 +58,7 @@ fun LibraryScreen(viewModel: LibraryViewModel) {
                         Row(modifier = Modifier.fillMaxWidth()
                             .padding(small_padding)
                             .clickable {
-                                viewModel.play(song)
+                                onSongClicked(song)
                             }) {
                             Column(verticalArrangement = Arrangement.spacedBy(extra_small_padding)) {
                                 Text(text = song.name,
