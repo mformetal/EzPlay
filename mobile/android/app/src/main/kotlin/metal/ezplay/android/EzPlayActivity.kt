@@ -77,7 +77,15 @@ class EzPlayActivity : ComponentActivity() {
                                 scaffoldState = scaffoldSheetState,
                                 modifier = Modifier.padding(bottomBarPadding),
                                 sheetContent = {
-                                    NowPlayingScreen(nowPlayingViewModel)
+                                    NowPlayingScreen(
+                                        uiState = nowPlayingViewModel.uiState,
+                                        onPrevClicked = {
+                                            nowPlayingViewModel.previous()
+                                        }, onNextClicked = {
+                                            nowPlayingViewModel.next()
+                                       }, onPlayPauseClicked = {
+                                           nowPlayingViewModel.musicControlsClicked()
+                                       })
                                 },
                             ) { bottomSheetPadding ->
                                 NavHost(navController, startDestination = Screen.Library.route, Modifier.padding(bottomSheetPadding)) {

@@ -26,13 +26,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import metal.ezplay.android.compose.extra_small_padding
 import metal.ezplay.android.compose.small_padding
 import metal.ezplay.android.xml.R as XmlR
 
 @Composable
-fun NowPlayingScreen(nowPlayingViewModel: NowPlayingViewModel) {
-    val state by nowPlayingViewModel.uiState.collectAsState()
+fun NowPlayingScreen(
+    uiState: StateFlow<NowPlayingState>,
+    onPrevClicked: () -> Unit,
+    onPlayPauseClicked: () -> Unit,
+    onNextClicked: () -> Unit) {
+    val state by uiState.collectAsState()
 
     Column {
         LinearProgressIndicator(
@@ -57,18 +63,14 @@ fun NowPlayingScreen(nowPlayingViewModel: NowPlayingViewModel) {
                     style = MaterialTheme.typography.bodySmall)
             }
 
-            IconButton(onClick = {
-                nowPlayingViewModel.previous()
-            }) {
+            IconButton(onClick = onPrevClicked) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = null
                 )
             }
 
-            IconButton(onClick = {
-                nowPlayingViewModel.musicControlsClicked()
-            }) {
+            IconButton(onClick = onPlayPauseClicked) {
                 Icon(
                     modifier = Modifier.size(64.dp),
                     painter =
@@ -79,9 +81,7 @@ fun NowPlayingScreen(nowPlayingViewModel: NowPlayingViewModel) {
                 )
             }
 
-            IconButton(onClick = {
-                nowPlayingViewModel.next()
-            }) {
+            IconButton(onClick = onNextClicked) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null
