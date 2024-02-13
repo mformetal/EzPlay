@@ -61,7 +61,7 @@ class EzPlayActivity : ComponentActivity() {
                 val libraryPager = Pager(PagingConfig(pageSize = 100, initialLoadSize = 100)) {
                     SongPagingSource(client)
                 }
-                val libraryViewModel = LibraryViewModel(database, queue, libraryPager)
+                val libraryViewModel = LibraryViewModel(database, libraryPager)
 
                 val searchViewModel = SearchViewModel(client, queue)
 
@@ -80,9 +80,9 @@ class EzPlayActivity : ComponentActivity() {
                                     NowPlayingScreen(
                                         uiState = nowPlayingViewModel.uiState,
                                         onPrevClicked = {
-                                            nowPlayingViewModel.previous()
+                                            queue.previous()
                                         }, onNextClicked = {
-                                            nowPlayingViewModel.next()
+                                            queue.next()
                                        }, onPlayPauseClicked = {
                                            nowPlayingViewModel.musicControlsClicked()
                                        })
@@ -90,11 +90,13 @@ class EzPlayActivity : ComponentActivity() {
                             ) { bottomSheetPadding ->
                                 NavHost(navController, startDestination = Screen.Library.route, Modifier.padding(bottomSheetPadding)) {
                                     composable(Screen.Library.route) {
-                                        LibraryScreen(libraryViewModel.songs, libraryViewModel::play)
+                                        LibraryScreen(flow = libraryViewModel.songs, onSongClicked = queue::now)
                                     }
 
                                     composable(Screen.Search.route) {
-                                        SearchScreen(searchViewModel)
+                                        SearchScreen(
+                                            flow = searchViewModel.searchResults,
+                                            onSongClicked = queue::now, onSearchTermUpdated = searchViewModel::search)
                                     }
                                 }
                             }

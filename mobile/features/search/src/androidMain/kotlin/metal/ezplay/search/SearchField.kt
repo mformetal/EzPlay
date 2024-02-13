@@ -1,7 +1,6 @@
 package metal.ezplay.search
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,22 +14,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
+import metal.ezplay.multiplatform.dto.SongDto
 
 @Composable
 fun SearchField(
-  viewModel: SearchViewModel,
-  onRefreshList: () -> Unit
+  searchResults: LazyPagingItems<SongDto>,
+  onSearchTermUpdated: (String) -> Unit
 ) {
-  val currentSearchTerm = viewModel.searchTerm
-  var textFieldValue by remember { mutableStateOf(TextFieldValue(currentSearchTerm)) }
+  var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
   TextField(
     textFieldValue,
     onValueChange = {
       textFieldValue = it
-      viewModel.search(textFieldValue.text)
 
-      onRefreshList()
+      onSearchTermUpdated(textFieldValue.text)
+
+      searchResults.refresh()
     },
     Modifier
       .wrapContentHeight()
@@ -39,9 +39,9 @@ fun SearchField(
     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
     keyboardActions = KeyboardActions(
       onSearch = {
-        viewModel.search(textFieldValue.text)
+        onSearchTermUpdated(textFieldValue.text)
 
-        onRefreshList()
+        searchResults.refresh()
       },
     ),
     singleLine = true,

@@ -33,29 +33,9 @@ class NowPlayingViewModel(
     fun musicControlsClicked() {
         when {
             player.currentSong == null -> shuffle()
-            player.isPlaying -> pause()
-            else -> play()
+            player.isPlaying -> player.pause()
+            else -> player.play()
         }
-    }
-
-    fun play(song: SongDto) {
-        queue.now(song)
-    }
-
-    fun next() {
-        queue.next()
-    }
-
-    fun previous() {
-        queue.previous()
-    }
-
-    private fun pause() {
-        player.pause()
-    }
-
-    private fun play() {
-        player.play()
     }
 
     private fun shuffle() {

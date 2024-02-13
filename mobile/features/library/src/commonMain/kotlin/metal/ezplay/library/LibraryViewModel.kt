@@ -15,7 +15,6 @@ import metal.ezplay.viewmodel.MultiplatformViewModel
 
 class LibraryViewModel(
     private val appDatabase: AppDatabase,
-    private val queue: PlayerQueue,
     private val pager: Pager<Int, SongDto>
 ) : MultiplatformViewModel() {
 
@@ -30,10 +29,6 @@ class LibraryViewModel(
                     }
                 }
         }
-    }
-
-    fun play(song: SongDto) {
-        queue.now(song)
     }
 
     private suspend fun updateDatabase(song: SongDto) {

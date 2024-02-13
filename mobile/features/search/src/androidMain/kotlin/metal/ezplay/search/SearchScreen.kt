@@ -17,19 +17,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import app.cash.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.flow.Flow
 import metal.ezplay.android.compose.extra_small_padding
 import metal.ezplay.android.compose.small_padding
+import metal.ezplay.multiplatform.dto.SongDto
 
 @Composable
-fun SearchScreen(viewModel: SearchViewModel) {
-    val songs = viewModel.searchResults.collectAsLazyPagingItems()
+fun SearchScreen(
+    flow: Flow<PagingData<SongDto>>,
+    onSongClicked: (SongDto) -> Unit,
+    onSearchTermUpdated: (String) -> Unit
+) {
+    val songs = flow.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = {
-            SearchField(viewModel) {
-                songs.refresh()
-            }
+            SearchField(songs, onSearchTermUpdated)
         },
         content = {
             LazyColumn(modifier = Modifier.padding(it),
@@ -55,7 +60,7 @@ fun SearchScreen(viewModel: SearchViewModel) {
                             Row(modifier = Modifier.fillMaxWidth()
                                 .padding(small_padding)
                                 .clickable {
-                                    viewModel.play(song)
+                                    onSongClicked(song)
                                 }) {
                                 Column(verticalArrangement = Arrangement.spacedBy(extra_small_padding)) {
                                     Text(text = song.name,
