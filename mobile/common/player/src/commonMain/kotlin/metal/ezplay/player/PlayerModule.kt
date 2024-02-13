@@ -5,7 +5,6 @@ package metal.ezplay.player
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
 val playerModule = module {

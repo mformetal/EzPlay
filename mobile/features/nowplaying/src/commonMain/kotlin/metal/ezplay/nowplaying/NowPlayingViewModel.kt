@@ -4,12 +4,13 @@ import androidx.lifecycle.viewModelScope
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import metal.ezplay.multiplatform.dto.SongDto
+import metal.ezplay.logging.SystemOut
 import metal.ezplay.multiplatform.dto.SongId
 import metal.ezplay.network.Routes
 import metal.ezplay.player.MusicPlayer
@@ -46,8 +47,8 @@ class NowPlayingViewModel(
                 val response = client.get(Routes.Songs.ids())
                 val ids = response.body<List<SongId>>()
                 queue.shuffle(ids)
-            } catch (e: Exception) {
-
+            } catch (e: IOException) {
+                SystemOut.exception(e)
             }
         }
     }

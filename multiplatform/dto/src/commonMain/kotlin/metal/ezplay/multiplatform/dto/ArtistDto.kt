@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 data class ArtistDto(
     val id: Int,
     val name: String
-) 
+)

@@ -18,36 +18,36 @@ import metal.ezplay.multiplatform.dto.SongDto
 import metal.ezplay.network.Routes
 
 class SongPagingSource(
-  private val client: HttpClient,
+    private val client: HttpClient,
 ) : PagingSource<Int, SongDto>() {
 
-  override suspend fun load(params: PagingSourceLoadParams<Int>): PagingSourceLoadResult<Int, SongDto> {
-    val page = params.key ?: 1
-    val httpResponse = client.post(Routes.Songs.page()) {
-      setBody(PagedSongListRequest(page))
+    override suspend fun load(params: PagingSourceLoadParams<Int>): PagingSourceLoadResult<Int, SongDto> {
+        val page = params.key ?: 1
+        val httpResponse = client.post(Routes.Songs.page()) {
+            setBody(PagedSongListRequest(page))
+        }
+
+        return when {
+            httpResponse.status.isSuccess() -> {
+                val response = httpResponse.body<PagedSongListResponse>()
+                PagingSourceLoadResultPage(
+                    data = response.songs,
+                    prevKey = response.previous,
+                    nextKey = response.next
+                )
+            }
+            httpResponse.status == HttpStatusCode.Forbidden -> {
+                PagingSourceLoadResultError(
+                    Exception("Whoops! You just exceeded the GitHub API rate limit."),
+                )
+            }
+            else -> {
+                PagingSourceLoadResultError(
+                    Exception("Received a ${httpResponse.status}."),
+                )
+            }
+        }
     }
 
-    return when {
-      httpResponse.status.isSuccess() -> {
-        val response = httpResponse.body<PagedSongListResponse>()
-        PagingSourceLoadResultPage(
-          data = response.songs,
-          prevKey = response.previous,
-          nextKey = response.next
-        )
-      }
-      httpResponse.status == HttpStatusCode.Forbidden -> {
-        PagingSourceLoadResultError(
-          Exception("Whoops! You just exceeded the GitHub API rate limit."),
-        )
-      }
-      else -> {
-        PagingSourceLoadResultError(
-          Exception("Received a ${httpResponse.status}."),
-        )
-      }
-    }
-  }
-
-  override fun getRefreshKey(state: PagingState<Int, SongDto>): Int? = null
+    override fun getRefreshKey(state: PagingState<Int, SongDto>): Int? = null
 }

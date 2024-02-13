@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.timeout
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import metal.ezplay.logging.SystemOut
 import metal.ezplay.multiplatform.dto.SongDto
 import metal.ezplay.multiplatform.dto.SongId
 import metal.ezplay.multiplatform.extensions.takeIfInstance
@@ -23,7 +24,6 @@ import metal.ezplay.network.Routes
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Duration.Companion.microseconds
-import kotlin.time.Duration.Companion.seconds
 
 class PlayerQueue(
     private val scope: CoroutineScope,
@@ -34,7 +34,11 @@ class PlayerQueue(
     private val downloader: SongDownloader
 ) {
 
-    private var queueJob: Job ?= null
+    companion object {
+        const val MAX_PERCENTAGE_BEFORE_GO_BACK = .05
+    }
+
+    private var queueJob: Job? = null
     private val indexFlow = MutableStateFlow(-1)
     private val queue = mutableListOf<SongId>()
 
@@ -69,7 +73,7 @@ class PlayerQueue(
 
                 when {
                     currentState == null -> goBack()
-                    currentState < .05 -> {
+                    currentState < MAX_PERCENTAGE_BEFORE_GO_BACK -> {
                         withContext(mainDispatcher) {
                             player.restart()
                         }
@@ -77,8 +81,10 @@ class PlayerQueue(
                     else -> goBack()
                 }
             } catch (e: NoSuchElementException) {
+                SystemOut.exception(e)
                 goBack()
             } catch (e: TimeoutCancellationException) {
+                SystemOut.exception(e)
                 goBack()
             }
         }

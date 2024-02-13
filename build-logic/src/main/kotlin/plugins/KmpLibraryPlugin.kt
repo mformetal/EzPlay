@@ -6,6 +6,9 @@ import extensions.catalog
 import extensions.intVersion
 import extensions.library
 import extensions.stringVersion
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektPlugin
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -14,6 +17,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
@@ -26,6 +30,8 @@ class KmpLibraryPlugin : Plugin<Project> {
     override fun apply(target: Project) = with (target) {
         apply<KotlinMultiplatformPluginWrapper>()
         apply<LibraryPlugin>()
+        apply<DetektPlugin>()
+        detekt()
 
         tasks.withType<Test>().configureEach {
             testLogging {
@@ -89,6 +95,46 @@ class KmpLibraryPlugin : Plugin<Project> {
                     baseline = file("lint-baseline.xml")
                 }
             }
+        }
+    }
+
+    private fun Project.detekt() {
+        extensions.configure<DetektExtension> {
+            allRules = true
+            autoCorrect = true
+            buildUponDefaultConfig = true
+
+            config.from("${rootDir}/detekt.yml")
+
+            toolVersion = catalog().stringVersion("detekt")
+        }
+
+        kotlinExtension.sourceSets.configureEach {
+            dependencies {
+                configurations.getByName("detektPlugins")
+                    .dependencies.add(
+                    dependencies.create("io.gitlab.arturbosch.detekt:detekt-formatting:${catalog().stringVersion("detekt")}")
+                )
+            }
+
+            if (name.startsWith("android")) {
+                dependencies {
+                    configurations.getByName("detektPlugins")
+                        .dependencies.add(
+                            dependencies.create("com.twitter.compose.rules:detekt:0.0.26")
+                        )
+                }
+            }
+        }
+
+        tasks.withType<Detekt>().configureEach {
+            exclude("**/build/**")
+        }
+
+        tasks.withType<Detekt>().matching { detektTask ->
+            detektTask.name == "detekt"
+        }.configureEach {
+            dependsOn(tasks.getByName("detektMetadataMain"))
         }
     }
 }

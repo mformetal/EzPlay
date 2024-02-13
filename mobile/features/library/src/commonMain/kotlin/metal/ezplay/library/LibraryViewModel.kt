@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import metal.ezplay.multiplatform.dto.SongDto
-import metal.ezplay.player.PlayerQueue
 import metal.ezplay.storage.AppDatabase
 import metal.ezplay.viewmodel.MultiplatformViewModel
 

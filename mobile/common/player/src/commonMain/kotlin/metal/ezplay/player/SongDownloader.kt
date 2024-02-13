@@ -12,7 +12,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.io.Sink
 import kotlinx.io.buffered
@@ -32,7 +31,12 @@ class SongDownloader(
     private val backgroundDispatcher: CoroutineDispatcher,
     private val client: HttpClient,
     private val fileSystem: FileSystem,
-    private val internalFileStorage: Path) {
+    private val internalFileStorage: Path
+) {
+
+    companion object {
+        const val MAX_CHUNKS = 10
+    }
 
     suspend fun download(songId: Int): Path {
         val preview = client.get(Routes.Songs.preview(songId)).body<PreviewDto>()
@@ -50,7 +54,7 @@ class SongDownloader(
 
     private suspend fun downloadFile(audioFilePath: Path, songId: Int) {
         val preview = client.get(Routes.Songs.preview(songId)).body<PreviewDto>()
-        val chunkSize = max(DEFAULT_BUFFER_SIZE.toLong(), preview.fileSize.div(10))
+        val chunkSize = max(DEFAULT_BUFFER_SIZE.toLong(), preview.fileSize.div(MAX_CHUNKS))
         var downloaded = 0L
         val sink = fileSystem.sink(audioFilePath).buffered()
         var hasFileDownloadError = false
@@ -58,7 +62,7 @@ class SongDownloader(
         while (downloaded < preview.fileSize && !hasFileDownloadError) {
             retry {
                 client.get(Routes.Songs.downloadSong(songId)) {
-                    header("Range", "bytes=${downloaded}-${downloaded + chunkSize}")
+                    header("Range", "bytes=$downloaded-${downloaded + chunkSize}")
                 }
             }.fold(onSuccess = { chunk ->
                 writeTo(sink, chunk)

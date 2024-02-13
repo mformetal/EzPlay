@@ -5,8 +5,8 @@ import kotlinx.coroutines.delay
 suspend fun <T> retry(
     times: Int = 5,
     factor: Double = 2.0,
-    block: suspend () -> T): Result<T>
-{
+    block: suspend () -> T
+): Result<T> {
     var currentDelay = 0L
     repeat(times - 1) { retryCount ->
         val result = runCatching {

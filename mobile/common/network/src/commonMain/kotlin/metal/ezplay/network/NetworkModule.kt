@@ -12,7 +12,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import metal.ezplay.logging.SystemOut
-import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val networkModule = module {
@@ -29,7 +28,7 @@ val networkModule = module {
                 exponentialDelay()
             }
             install(Logging) {
-                logger = object: Logger {
+                logger = object : Logger {
                     override fun log(message: String) {
                         SystemOut.debug(message)
                     }
