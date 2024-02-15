@@ -1,11 +1,8 @@
 package metal.ezplay.nowplaying
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,8 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import metal.ezplay.android.compose.extra_small_padding
 import metal.ezplay.android.compose.small_padding
@@ -37,7 +32,8 @@ fun NowPlayingScreen(
     uiState: StateFlow<NowPlayingState>,
     onPrevClicked: () -> Unit,
     onPlayPauseClicked: () -> Unit,
-    onNextClicked: () -> Unit) {
+    onNextClicked: () -> Unit
+) {
     val state by uiState.collectAsState()
 
     Column {

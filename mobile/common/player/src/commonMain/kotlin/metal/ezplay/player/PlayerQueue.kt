@@ -3,6 +3,7 @@ package metal.ezplay.player
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -42,15 +43,28 @@ class PlayerQueue(
     private val indexFlow = MutableStateFlow(-1)
     private val queue = mutableListOf<SongId>()
 
-    fun shuffle(ids: List<SongId>) {
-        queueJob?.cancel()
+    init {
+        listenToPlayerState()
+    }
 
-        queue.clear()
-        queue.addAll(ids)
+    fun shuffle() {
+        scope.launch(backgroundDispatcher) {
+            try {
+                val response = client.get(Routes.Songs.ids())
+                val ids = response.body<List<SongId>>()
 
-        indexFlow.update { 0 }
+                queueJob?.cancel()
 
-        startQueueJob()
+                queue.clear()
+                queue.addAll(ids)
+
+                indexFlow.update { 0 }
+
+                startQueueJob()
+            } catch (e: IOException) {
+                SystemOut.exception(e)
+            }
+        }
     }
 
     fun next() {
@@ -68,7 +82,7 @@ class PlayerQueue(
                     .first()
                     .takeIfInstance<MusicPlayerState.Playing>()
                     ?.run {
-                        elapsed.toFloat().div(total.toFloat())
+                        progress()
                     }
 
                 when {
@@ -135,6 +149,20 @@ class PlayerQueue(
 
         withContext(mainDispatcher) {
             player.play(song, path.toString())
+        }
+    }
+
+    private fun listenToPlayerState() {
+        scope.launch {
+            player.playerState
+                .collect { playerState ->
+                    when (playerState) {
+                        MusicPlayerState.Finished -> { shuffle() }
+                        MusicPlayerState.Loading -> { }
+                        MusicPlayerState.Paused -> { }
+                        is MusicPlayerState.Playing -> { }
+                    }
+                }
         }
     }
 }

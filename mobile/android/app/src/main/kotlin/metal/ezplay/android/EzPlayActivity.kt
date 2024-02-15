@@ -53,7 +53,6 @@ class EzPlayActivity : ComponentActivity() {
                 val client = get<HttpClient>()
 
                 val nowPlayingViewModel = NowPlayingViewModel(
-                    client,
                     player,
                     queue,
                 )
@@ -81,10 +80,11 @@ class EzPlayActivity : ComponentActivity() {
                                         uiState = nowPlayingViewModel.uiState,
                                         onPrevClicked = {
                                             queue.previous()
+                                        },
+                                        onPlayPauseClicked = {
+                                            nowPlayingViewModel.musicControlsClicked()
                                         }, onNextClicked = {
                                             queue.next()
-                                       }, onPlayPauseClicked = {
-                                           nowPlayingViewModel.musicControlsClicked()
                                        })
                                 },
                             ) { bottomSheetPadding ->
